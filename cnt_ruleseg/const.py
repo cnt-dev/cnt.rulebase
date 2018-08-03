@@ -19,8 +19,9 @@ def generate_range_checker(sorted_ranges):
                 (idx != 0 and code_point != ranges_start[idx]):
             idx -= 1
 
-        # 2. check if code_point <= end.
-        return code_point <= sorted_ranges[idx][1]
+        # 2. check if start <= code_point <= end.
+        # (to deal with the coner case when idx == 0).
+        return sorted_ranges[idx][0] <= code_point <= sorted_ranges[idx][1]
 
     return _char_in_range
 
@@ -143,13 +144,4 @@ CHINESE_CHARS = sorted_chain(
         (0x3105, 0x312F),
         (0x31A0, 0x31BA),
     ],
-)
-
-
-# for sentseg.
-SENTSEG_RANGES = sorted_chain(
-    CHINESE_CHARS,
-    ENGLISH_CHARS,
-    DIGITS,
-    DELIMITER,
 )

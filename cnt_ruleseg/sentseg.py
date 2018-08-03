@@ -2,81 +2,119 @@ import re
 
 from .const import (
     SENTENCE_ENDS,
-    SENTSEG_RANGES,
+    CHINESE_CHARS,
+    ENGLISH_CHARS,
+    DIGITS,
+    DELIMITER,
+    sorted_chain,
     generate_range_checker,
 )
 
+import ahocorasick
 
-_sentseg_ranges_checker = generate_range_checker(SENTSEG_RANGES)
+
+# for sentseg.
+SENTSEG_RANGES = sorted_chain(
+    CHINESE_CHARS,
+    ENGLISH_CHARS,
+    DIGITS,
+    DELIMITER,
+)
 
 
-def _char_is_valid(
-    c, allow_non_newline=True,
-    _whitespace_pattern=re.compile(r'[^\S\n]'),
+def mark_whitespaces(
+    text,
+    _whitespace_pattern=re.compile(r'\s+'),
 ):
-    if c.isspace():
-        return allow_non_newline and bool(_whitespace_pattern.match(c))
-    else:
-        return _sentseg_ranges_checker(c)
+    '''
+    return a list of marks for identifying whitespaces.
+    '''
+    marks = [False] * len(text)
+    for match in _whitespace_pattern.finditer(text):
+        start, end = match.span()
+        marks[start:end] = (True,) * (end - start)
+    return marks
+
+
+def mark_extended_chinese_chars(
+    text,
+    _sentseg_ranges_checker=generate_range_checker(sorted_chain(
+        CHINESE_CHARS,
+        ENGLISH_CHARS,
+        DIGITS,
+        DELIMITER,
+    )),
+):
+    marks = [False] * len(text)
+    for idx, c in enumerate(text):
+        if _sentseg_ranges_checker(c):
+            marks[idx] = True
+    return marks
+
+
+def _build_ac_automation(keys):
+    ac = ahocorasick.Automaton()
+    for idx, key in enumerate(keys):
+        ac.add_word(key, (idx, key))
+    ac.make_automaton()
+    return ac
+
+
+def mark_sentence_endings(
+    text,
+    _ac_automation=_build_ac_automation(SENTENCE_ENDS),
+):
+    marks = [False] * len(text)
+    for end, (_, key) in _ac_automation.iter(text):
+        end += 1
+        start = end - len(key)
+        marks[start:end] = (True,) * (end - start)
+    return marks
 
 
 def sentseg(text):
-    '''
-    text -> List( (text, [start, end)) )
-    text should have been decoded.
-    '''
-    assert isinstance(text, str)
+    # features.
+    whitespaces = mark_whitespaces(text)
+    extended_chinese_chars = mark_extended_chinese_chars(text)
+    sentence_endings = mark_sentence_endings(text)
 
+    # two pointers move.
     sentences = []
-    start, end = 0, 0
 
     def _push_to_sentence(start, end):
         sentences.append((
             text[start:end],
             (start, end),
         ))
+        return end
 
-    while end < len(text):
-        # skip if text[start] is invalid.
-        if end == start and \
-                not _char_is_valid(text[start], allow_non_newline=False):
+    TEXTLEN = len(text)
+    start, end = 0, 0
+    while start < TEXTLEN:
+        # skip if it isn't chinese char.
+        if not extended_chinese_chars[start]:
             start += 1
-            end = start
             continue
 
-        # 1. end != start and end might be invalid.
-        # 2. end == start and end must not be invalid.
-        if end != start and not _char_is_valid(text[end]):
-            _push_to_sentence(start, end)
-            start = end
-            continue
-
-        # match sentence endings.
-        found_ending = False
-        for sent_end in SENTENCE_ENDS:
-            if end + len(sent_end) > len(text):
-                continue
-            if text[end:end + len(sent_end)] == sent_end:
-                end += len(sent_end)
-                if len(sent_end) == 1:
-                    # in case of size 1 ending,
-                    # duplication of sent_end should also be considered.
-                    while end < len(text) and text[end] == text[end - 1]:
-                        end += 1
-
-                # stop processing.
-                found_ending = True
+        # to capture a new sentence.
+        end = start + 1
+        while end < TEXTLEN:
+            # keep going if zh chars or whitespace. stop otherwise.
+            if not (extended_chinese_chars[end] or whitespaces[end]):
                 break
 
-        if found_ending:
-            _push_to_sentence(start, end)
-            start = end
-            continue
-        else:
+            # reach the end of sentence.
+            if sentence_endings[end]:
+                while end < TEXTLEN and sentence_endings[end]:
+                    end += 1
+                break
+
+            # everything is good.
             end += 1
 
-    # last sentence.
-    if start < len(text):
-        _push_to_sentence(start, len(text))
+        start = _push_to_sentence(start, end)
+
+    if start < TEXTLEN:
+        _push_to_sentence(start, TEXTLEN)
 
     return sentences

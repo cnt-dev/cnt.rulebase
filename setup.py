@@ -12,7 +12,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-
+    'pyahocorasick==1.1.8',
 ]
 
 setup_requirements = ['pytest-runner', ]
