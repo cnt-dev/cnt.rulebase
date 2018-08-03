@@ -13,7 +13,6 @@ from .const import (
 import ahocorasick
 
 
-# for sentseg.
 SENTSEG_RANGES = sorted_chain(
     CHINESE_CHARS,
     ENGLISH_CHARS,
@@ -38,12 +37,7 @@ def mark_whitespaces(
 
 def mark_extended_chinese_chars(
     text,
-    _sentseg_ranges_checker=generate_range_checker(sorted_chain(
-        CHINESE_CHARS,
-        ENGLISH_CHARS,
-        DIGITS,
-        DELIMITER,
-    )),
+    _sentseg_ranges_checker=generate_range_checker(SENTSEG_RANGES),
 ):
     marks = [False] * len(text)
     for idx, c in enumerate(text):

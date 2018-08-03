@@ -3,7 +3,7 @@ from cnt_ruleseg.sentseg import (
     mark_extended_chinese_chars,
     mark_sentence_endings,
     sentseg,
-    SENTSEG_RANGES, SENTENCE_ENDS,
+    SENTSEG_RANGES,
 )
 
 
