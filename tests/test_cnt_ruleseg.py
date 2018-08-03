@@ -1,4 +1,4 @@
-from cnt_sentseg import sentseg
+from cnt_ruleseg import sentseg
 
 
 def test_sentseg():

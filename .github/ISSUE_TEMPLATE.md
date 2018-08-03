@@ -1,4 +1,4 @@
-* cnt_sentseg version:
+* cnt_ruleseg version:
 * Python version:
 * Operating System:
 

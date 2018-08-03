@@ -1,13 +1,13 @@
 ===========
-cnt_sentseg
+cnt_ruleseg
 ===========
 
 
-.. image:: https://img.shields.io/pypi/v/cnt_sentseg.svg
-        :target: https://pypi.python.org/pypi/cnt_sentseg
+.. image:: https://img.shields.io/pypi/v/cnt_ruleseg.svg
+        :target: https://pypi.python.org/pypi/cnt_ruleseg
 
-.. image:: https://img.shields.io/travis/huntzhan/cnt_sentseg.svg
-        :target: https://travis-ci.org/huntzhan/cnt_sentseg
+.. image:: https://img.shields.io/travis/huntzhan/cnt_ruleseg.svg
+        :target: https://travis-ci.org/huntzhan/cnt_ruleseg
 
 .. image:: https://readthedocs.org/projects/cnt-sentseg/badge/?version=latest
         :target: https://cnt-sentseg.readthedocs.io/en/latest/?badge=latest

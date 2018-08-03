@@ -1,4 +1,4 @@
-Welcome to cnt_sentseg's documentation!
+Welcome to cnt_ruleseg's documentation!
 ======================================
 
 .. toctree::
