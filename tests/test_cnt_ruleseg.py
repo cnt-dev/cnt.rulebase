@@ -7,6 +7,7 @@ def test_sentseg():
     )
     sents = sentseg(text)
 
+    print(sents)
     assert 3 == len(sents)
 
     sent1_text, sent1_range = sents[0]

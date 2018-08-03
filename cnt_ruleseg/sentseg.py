@@ -1,17 +1,20 @@
 import re
-import bisect
 
-from .const import SENTENCE_ENDS, CHINESE_ALL, CHINESE_ALL_START
+from .const import (
+    SENTENCE_ENDS,
+    SENTSEG_RANGES,
+    generate_range_checker,
+)
 
 
-def _char_in_zh_range(char):
-    code_point = ord(char)
-    # 1. find a range such that (start, end), start <= code_point.
-    idx = bisect.bisect_left(CHINESE_ALL_START, code_point)
-    if idx == len(CHINESE_ALL_START) or code_point != CHINESE_ALL_START[idx]:
-        idx -= 1
-    # 2. check if code_point <= end.
-    return code_point <= CHINESE_ALL[idx][1]
+_sentseg_ranges_checker = generate_range_checker(SENTSEG_RANGES)
+
+
+def _char_is_valid(c, allow_non_newline=True):
+    if c.isspace():
+        return allow_non_newline and bool(re.match(r'[^\S\n]', c))
+    else:
+        return _sentseg_ranges_checker(c)
 
 
 def sentseg(text):
@@ -30,19 +33,10 @@ def sentseg(text):
             (start, end),
         ))
 
-    def _char_is_valid(c, allow_non_newline=True):
-        if c.isspace():
-            if not allow_non_newline:
-                return False
-            else:
-                return bool(re.match(r'[^\S\n]', c))
-        else:
-            # check if it's chinese char.
-            return _char_in_zh_range(c)
-
     while end < len(text):
         # skip if text[start] is invalid.
-        if end == start and not _char_is_valid(text[start], allow_non_newline=False):
+        if end == start and \
+                not _char_is_valid(text[start], allow_non_newline=False):
             start += 1
             end = start
             continue
