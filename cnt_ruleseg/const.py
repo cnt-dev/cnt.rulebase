@@ -45,7 +45,6 @@ SENTENCE_ENDS = [
     '！',
     '？',
     '；',
-    '：',
 
     # size 1 ending. en.
     '!',
@@ -117,8 +116,11 @@ DELIMITER = sorted_chain(
 
 # Chinese Chars.
 # pull from https://www.qqxiuzi.cn/zh/hanzi-unicode-bianma.php
+# notice 3007 a delimiter, hence should not be included.
+#
 # lines = '''copy paste'''
 # [l.split('\t') for l in lines.strip().split('\n')]
+#
 CHINESE_CHARS = sorted_chain(
     [
         (0x4E00, 0x9FA5),
@@ -140,9 +142,9 @@ CHINESE_CHARS = sorted_chain(
         (0x2FF0, 0x2FFB),
         (0x3105, 0x312F),
         (0x31A0, 0x31BA),
-        (0x3007, 0x3007),
     ],
 )
+
 
 # for sentseg.
 SENTSEG_RANGES = sorted_chain(

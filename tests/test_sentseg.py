@@ -1,4 +1,4 @@
-from cnt_ruleseg import sentseg
+from cnt_ruleseg.sentseg import sentseg, SENTSEG_RANGES
 
 
 def test_sentseg():
@@ -21,3 +21,11 @@ def test_sentseg():
     sent3_text, sent3_range = sents[2]
     assert '测试句子三！！！' == sent3_text
     assert '测试句子三！！！' == text[sent3_range[0]:sent3_range[1]]
+
+
+def test_no_overlapping():
+    pre_end = -1
+    for start, end in SENTSEG_RANGES:
+        assert end >= start
+        assert start > pre_end
+        pre_end = end

@@ -10,9 +10,12 @@ from .const import (
 _sentseg_ranges_checker = generate_range_checker(SENTSEG_RANGES)
 
 
-def _char_is_valid(c, allow_non_newline=True):
+def _char_is_valid(
+    c, allow_non_newline=True,
+    _whitespace_pattern=re.compile(r'[^\S\n]'),
+):
     if c.isspace():
-        return allow_non_newline and bool(re.match(r'[^\S\n]', c))
+        return allow_non_newline and bool(_whitespace_pattern.match(c))
     else:
         return _sentseg_ranges_checker(c)
 
