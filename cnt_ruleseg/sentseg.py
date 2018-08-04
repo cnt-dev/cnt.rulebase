@@ -7,7 +7,10 @@ from .const import (
     DIGITS,
     DELIMITER,
     sorted_chain,
-    generate_range_checker,
+)
+from .common import (
+    generate_ranges_marker,
+    generate_segmenter,
 )
 
 import ahocorasick
@@ -35,15 +38,7 @@ def mark_whitespaces(
     return marks
 
 
-def mark_extended_chinese_chars(
-    text,
-    _sentseg_ranges_checker=generate_range_checker(SENTSEG_RANGES),
-):
-    marks = [False] * len(text)
-    for idx, c in enumerate(text):
-        if _sentseg_ranges_checker(c):
-            marks[idx] = True
-    return marks
+mark_extended_chinese_chars = generate_ranges_marker(SENTSEG_RANGES)
 
 
 def _build_ac_automation(keys):
@@ -66,49 +61,33 @@ def mark_sentence_endings(
     return marks
 
 
-def sentseg(text):
-    # features.
-    whitespaces = mark_whitespaces(text)
-    extended_chinese_chars = mark_extended_chinese_chars(text)
-    sentence_endings = mark_sentence_endings(text)
+def sentseg_start_cond_fn(
+    start,
+    whitespaces, extended_chinese_chars, sentence_endings,
+):
+    return extended_chinese_chars[start]
 
-    # two pointers move.
-    sentences = []
 
-    def _push_to_sentence(start, end):
-        sentences.append((
-            text[start:end],
-            (start, end),
-        ))
-        return end
-
-    TEXTLEN = len(text)
-    start, end = 0, 0
-    while start < TEXTLEN:
-        # skip if it isn't chinese char.
-        if not extended_chinese_chars[start]:
-            start += 1
-            continue
-
-        # to capture a new sentence.
-        end = start + 1
-        while end < TEXTLEN:
-            # keep going if zh chars or whitespace. stop otherwise.
-            if not (extended_chinese_chars[end] or whitespaces[end]):
-                break
-
-            # reach the end of sentence.
-            if sentence_endings[end]:
-                while end < TEXTLEN and sentence_endings[end]:
-                    end += 1
-                break
-
-            # everything is good.
+def sentseg_end_cond_fn(
+    end,
+    whitespaces, extended_chinese_chars, sentence_endings,
+):
+    if not (extended_chinese_chars[end] or whitespaces[end]):
+        return True, end
+    elif sentence_endings[end]:
+        while end < len(sentence_endings) and sentence_endings[end]:
             end += 1
+        return True, end
+    else:
+        return False, end + 1
 
-        start = _push_to_sentence(start, end)
 
-    if start < TEXTLEN:
-        _push_to_sentence(start, TEXTLEN)
-
-    return sentences
+sentseg = generate_segmenter(
+    [
+        mark_whitespaces,
+        mark_extended_chinese_chars,
+        mark_sentence_endings,
+    ],
+    sentseg_start_cond_fn,
+    sentseg_end_cond_fn,
+)
