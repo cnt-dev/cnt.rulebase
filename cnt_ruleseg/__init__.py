@@ -4,7 +4,8 @@
 
 __author__ = """Hunt Zhan"""
 __email__ = 'huntzhan.dev@gmail.com'
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 
 from .sentseg import sentseg  # noqa: F401
+from .dlmseg import dlmseg  # noqa: F401
