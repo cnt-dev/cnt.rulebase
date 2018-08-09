@@ -41,7 +41,7 @@ def _flatten_nested(seq, ret=None):
     if ret is None:
         ret = []
     for item in seq:
-        if not isinstance(item, (list, tuple)):
+        if not isinstance(item, (list, tuple, set)):
             ret.append(item)
         else:
             _flatten_nested(item, ret)
@@ -99,10 +99,10 @@ SENTENCE_ENDS = _flatten_nested([
 ])
 # add normalized endings.
 SENTENCE_ENDS = _flatten_nested([
-    set([
+    set((
         end,
         fullwidth_to_halfwidth(end),
-    ])
+    ))
     for end in SENTENCE_ENDS
 ])
 
