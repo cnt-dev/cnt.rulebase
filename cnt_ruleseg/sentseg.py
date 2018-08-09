@@ -61,6 +61,15 @@ def mark_sentence_endings(
     return marks
 
 
+def mark_sentence_endings_with_comma(
+    text,
+    _ac_automation=_build_ac_automation(
+        SENTENCE_ENDS + [chr(0xFF0C), chr(0x201A), ','],
+    ),
+):
+    return mark_sentence_endings(text, _ac_automation=_ac_automation)
+
+
 def sentseg_start_cond_fn(
     start,
     whitespaces, extended_chinese_chars, sentence_endings,
@@ -82,7 +91,7 @@ def sentseg_end_cond_fn(
         return False, end + 1
 
 
-sentseg = generate_segmenter(
+_sentseg = generate_segmenter(
     [
         mark_whitespaces,
         mark_extended_chinese_chars,
@@ -91,3 +100,19 @@ sentseg = generate_segmenter(
     sentseg_start_cond_fn,
     sentseg_end_cond_fn,
 )
+_sentseg_with_comma = generate_segmenter(
+    [
+        mark_whitespaces,
+        mark_extended_chinese_chars,
+        mark_sentence_endings_with_comma,
+    ],
+    sentseg_start_cond_fn,
+    sentseg_end_cond_fn,
+)
+
+
+def sentseg(text, enable_comma=False):
+    if enable_comma:
+        return _sentseg_with_comma(text)
+    else:
+        return _sentseg(text)

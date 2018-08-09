@@ -34,6 +34,11 @@ def test_sentseg():
     assert '测试句子三！！！' == sent3_text
     assert '测试句子三！！！' == text[sent3_range[0]:sent3_range[1]]
 
+    text = (
+        'a,b，c‚d'
+    )
+    assert 4 == len(sentseg(text, enable_comma=True))
+
 
 def test_no_overlapping_char_ranges():
     pre_end = -1
