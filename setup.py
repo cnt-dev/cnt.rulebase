@@ -5,19 +5,24 @@
 
 from setuptools import setup, find_packages
 
+
+def load_requirements(path):
+    with open(path) as fin:
+        return [
+            line
+            for line in map(lambda l: l.strip(), fin.readlines())
+            if line and not line.startswith('#')
+        ]
+
+
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [
-    'pyahocorasick==1.1.8',
-]
-
-setup_requirements = ['pytest-runner', ]
-
-test_requirements = ['pytest', ]
+requirements = load_requirements('requirements_prod.txt')
+test_requirements = load_requirements('requirements_dev.txt')
 
 setup(
     author="Hunt Zhan",
@@ -27,9 +32,11 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
-    description="Chinese Sentence Segmentation",
+    description="None",
     install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
@@ -37,7 +44,6 @@ setup(
     keywords='cnt_ruleseg',
     name='cnt_ruleseg',
     packages=find_packages(include=['cnt_ruleseg']),
-    setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/huntzhan/cnt_ruleseg',

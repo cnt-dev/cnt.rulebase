@@ -9,18 +9,18 @@ cnt_ruleseg
 .. image:: https://img.shields.io/travis/huntzhan/cnt_ruleseg.svg
         :target: https://travis-ci.org/huntzhan/cnt_ruleseg
 
-.. image:: https://readthedocs.org/projects/cnt-sentseg/badge/?version=latest
-        :target: https://cnt-sentseg.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/cnt-ruleseg/badge/?version=latest
+        :target: https://cnt-ruleseg.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
 
 
 
-Chinese Sentence Segmentation
+None
 
 
 * Free software: MIT license
-* Documentation: https://cnt-sentseg.readthedocs.io.
+* Documentation: https://cnt-ruleseg.readthedocs.io.
 
 
 Features
