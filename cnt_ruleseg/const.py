@@ -26,32 +26,85 @@ def generate_range_checker(sorted_ranges):
     return _char_in_range
 
 
-SENTENCE_ENDS = [
-    # size 3 ending. zh.
-    '？！”',
-    '。’”',
-    '！’”',
-    '……”',
+def fullwidth_to_halfwidth(seq):
 
-    # size 2 ending. zh.
-    '。”',
-    '！”',
-    '？”',
-    '；”',
+    def convert(char):
+        code_point = ord(char)
+        if not (0xFF01 <= code_point <= 0xFF5E):
+            return char
+        return chr(code_point - 0xFEE0)
+
+    return ''.join(map(convert, seq))
+
+
+def _flatten_nested(seq, ret=None):
+    if ret is None:
+        ret = []
+    for item in seq:
+        if not isinstance(item, (list, tuple)):
+            ret.append(item)
+        else:
+            _flatten_nested(item, ret)
+    return ret
+
+
+def _append_code_points_to_text(text, *code_points):
+    return [
+        text + chr(cp)
+        for cp in code_points
+    ]
+
+
+def _append_code_points_to_seq(seq, *code_points):
+    if isinstance(seq, str):
+        seq = [seq]
+    return _flatten_nested([
+        _append_code_points_to_text(text, *code_points)
+        for text in seq
+    ])
+
+
+def _single_quotation(seq):
+    return _append_code_points_to_seq(seq, 0xFF07, 0x2019, 0x2032)
+
+
+def _double_quotation(seq):
+    return _append_code_points_to_seq(seq, 0xFF02, 0x201D, 0x2033)
+
+
+SENTENCE_ENDS = _flatten_nested([
+    # size 3.
+    _double_quotation('？！'),
+    _double_quotation('……'),
+    _double_quotation(
+        _single_quotation('。'),
+    ),
+    _double_quotation(
+        _single_quotation('！'),
+    ),
+
+    # size 2.
+    _double_quotation('。'),
+    _double_quotation('！'),
+    _double_quotation('？'),
+    _double_quotation('；'),
     '？！',
 
-    # size 1 ending. zh.
+    # size 1.
     '…',
     '。',
     '！',
     '？',
     '；',
-
-    # size 1 ending. en.
-    '!',
-    '?',
-    ';',
-]
+])
+# add normalized endings.
+SENTENCE_ENDS = _flatten_nested([
+    set([
+        end,
+        fullwidth_to_halfwidth(end),
+    ])
+    for end in SENTENCE_ENDS
+])
 
 
 # English Chars.

@@ -1,10 +1,17 @@
+from collections import Counter
+
 from cnt_ruleseg.sentseg import (
     mark_whitespaces,
     mark_extended_chinese_chars,
     mark_sentence_endings,
     sentseg,
     SENTSEG_RANGES,
+    SENTENCE_ENDS,
 )
+
+
+def test_sentseg_ends():
+    assert len(SENTENCE_ENDS) == len(set(SENTENCE_ENDS))
 
 
 def test_sentseg():
@@ -63,8 +70,8 @@ def test_mark_sentence_endings():
     text = 'a。"b，c!？！”d!！!'
     assert [
         False,
-        True,
-        False, False, False, False,
+        True, True,
+        False, False, False,
         True, True, True, True,
         False,
         True, True, True,
