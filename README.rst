@@ -1,16 +1,16 @@
 ===========
-cnt_ruleseg
+cnt_rulebase
 ===========
 
 
-.. image:: https://img.shields.io/pypi/v/cnt_ruleseg.svg
-        :target: https://pypi.python.org/pypi/cnt_ruleseg
+.. image:: https://img.shields.io/pypi/v/cnt_rulebase.svg
+        :target: https://pypi.python.org/pypi/cnt_rulebase
 
-.. image:: https://img.shields.io/travis/huntzhan/cnt_ruleseg.svg
-        :target: https://travis-ci.org/huntzhan/cnt_ruleseg
+.. image:: https://img.shields.io/travis/huntzhan/cnt_rulebase.svg
+        :target: https://travis-ci.org/huntzhan/cnt_rulebase
 
-.. image:: https://readthedocs.org/projects/cnt-ruleseg/badge/?version=latest
-        :target: https://cnt-ruleseg.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/cnt-rulebase/badge/?version=latest
+        :target: https://cnt-rulebase.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
 
@@ -20,7 +20,7 @@ None
 
 
 * Free software: MIT license
-* Documentation: https://cnt-ruleseg.readthedocs.io.
+* Documentation: https://cnt-rulebase.readthedocs.io.
 
 
 Features

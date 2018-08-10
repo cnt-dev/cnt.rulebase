@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use cnt_ruleseg in a project::
+To use cnt_rulebase in a project::
 
-    import cnt_ruleseg
+    import cnt_rulebase

@@ -11,5 +11,5 @@ deploy:
     secure: uHnlH6lsYhmETZ1tNU4hGwdEelDWz2KzaR28brdN7HJqvjbRSeCDo3rRwfNjA1ZXJaIXd+zisVc05/IofqniN0LPbJS8lIAQ7wKHBPDIqkrJzew93+V1/fc0QFxdVdyK4f4r+syCNtFXFlfdh7maFCVBjnFdi+svH5wdJ90WX1NS/dvP6CWCawtg7rHXm4TsZ92o/EFtblyFOkVZ+IIC6bHQg/WjsKHsaWfDs4W1lhgc1VILHxfl9Q/ztoXIDZP6hOROkc6SBiCQkiCzJZczl9lPs71liZLGcT2aWcZj5/QdbkSJhYKZW+MNed5Zq9d9c1ZlLsQR3ldPATXYLSoB06ZITQZRPqOo98NLYYt/4jnl5s1RgOtbkdM8mzeVMhNT2rVmJKQTQOmMVHd1ay3TGcH9xDL2b4xYyjtIajBF0qkcq1Z/wNJb4IfE+t6I8Whwz6nvHaVVmjHUPLUJHrDNwWpJHXQwMD08Av6Oq+scyIchXB0E7bjCOJo2yJc48wlvYmEH/PU5wv1zUANQ0dKpaLf9WBYkQe9Tcp1P/1TYKdrf4B+Np/u3/HN/MfDCjZt+V3kFbyJv+yl3VdDN9t3pDxu43KZrNmj1w4Nl5T1L21EmNT60kCznLLb/vsljUzY7A0puJYnhxzoPeX8RoSbQN25doDErwHGG+8KHsuqW8aw=
   on:
     tags: true
-    repo: cnt-dev/cnt.ruleseg
+    repo: cnt-dev/cnt.rulebase
     python: 3.6

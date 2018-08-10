@@ -1,6 +1,6 @@
 from collections import Counter
 
-from cnt_ruleseg.sentseg import (
+from cnt_rulebase.sentseg import (
     mark_whitespaces,
     mark_extended_chinese_chars,
     mark_sentence_endings,

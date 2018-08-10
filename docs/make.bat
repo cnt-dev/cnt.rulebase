@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set SPHINXPROJ=cnt_ruleseg
+set SPHINXPROJ=cnt_rulebase
 
 if "%1" == "" goto help
 

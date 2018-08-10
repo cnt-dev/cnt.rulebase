@@ -1,4 +1,4 @@
-from cnt_ruleseg.dlmseg import dlmseg
+from cnt_rulebase.dlmseg import dlmseg
 
 
 def test_dlmseg():
