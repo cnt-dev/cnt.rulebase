@@ -5,7 +5,7 @@ from .const import (
     CHINESE_CHARS,
     ENGLISH_CHARS,
     DIGITS,
-    DELIMITER,
+    DELIMITERS,
     sorted_chain,
 )
 from .common import (
@@ -20,7 +20,7 @@ SENTSEG_RANGES = sorted_chain(
     CHINESE_CHARS,
     ENGLISH_CHARS,
     DIGITS,
-    DELIMITER,
+    DELIMITERS,
 )
 
 
