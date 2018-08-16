@@ -1,4 +1,4 @@
-from .const import generate_range_checker
+from .utils import generate_range_checker
 
 
 def generate_ranges_marker(ranges):
