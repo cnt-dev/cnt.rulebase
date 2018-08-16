@@ -1,4 +1,4 @@
-Welcome to cnt_rulebase's documentation!
+Welcome to cnt.rulebase's documentation!
 ======================================
 
 .. toctree::
