@@ -1,5 +1,3 @@
-from collections import Counter
-
 from cnt.rulebase.sentseg import (
     mark_whitespaces,
     mark_extended_chinese_chars,

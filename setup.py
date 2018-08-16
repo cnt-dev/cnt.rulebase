@@ -3,7 +3,7 @@
 
 """The setup script."""
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 
 def load_requirements(path):
