@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Top-level package for cnt_rulebase."""
+"""Top-level package for cnt.rulebase."""
 
 __author__ = """Hunt Zhan"""
 __email__ = 'huntzhan.dev@gmail.com'

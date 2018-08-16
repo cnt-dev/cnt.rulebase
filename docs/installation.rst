@@ -8,13 +8,13 @@ Installation
 Stable release
 --------------
 
-To install cnt_rulebase, run this command in your terminal:
+To install cnt.rulebase, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install cnt_rulebase
+    $ pip install cnt.rulebase
 
-This is the preferred method to install cnt_rulebase, as it will always install the most recent stable release.
+This is the preferred method to install cnt.rulebase, as it will always install the most recent stable release.
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
@@ -26,19 +26,19 @@ you through the process.
 From sources
 ------------
 
-The sources for cnt_rulebase can be downloaded from the `Github repo`_.
+The sources for cnt.rulebase can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/huntzhan/cnt_rulebase
+    $ git clone git://github.com/huntzhan/cnt.rulebase
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/huntzhan/cnt_rulebase/tarball/master
+    $ curl  -OL https://github.com/huntzhan/cnt.rulebase/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/huntzhan/cnt_rulebase
-.. _tarball: https://github.com/huntzhan/cnt_rulebase/tarball/master
+.. _Github repo: https://github.com/huntzhan/cnt.rulebase
+.. _tarball: https://github.com/huntzhan/cnt.rulebase/tarball/master

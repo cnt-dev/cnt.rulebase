@@ -1,4 +1,4 @@
-* cnt_rulebase version:
+* cnt.rulebase version:
 * Python version:
 * Operating System:
 
