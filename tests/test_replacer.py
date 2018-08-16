@@ -1,4 +1,4 @@
-from cnt_rulebase.replace import (
+from cnt.rulebase.replace import (
     replace_chinese_chars,
     replace_english_chars,
     replace_digits,

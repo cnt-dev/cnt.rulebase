@@ -43,7 +43,7 @@ setup(
     include_package_data=True,
     keywords='cnt_rulebase',
     name='cnt_rulebase',
-    packages=find_packages(include=['cnt_rulebase']),
+    packages=['cnt.rulebase'],
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/huntzhan/cnt_rulebase',
