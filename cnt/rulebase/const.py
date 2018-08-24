@@ -1,17 +1,19 @@
 import itertools
 import bisect
-from typing import List, Tuple
+from typing import Union, Iterable, List, Tuple, Any, Callable
 
 
-def sorted_chain(*ranges: List[Tuple(int, int)]) -> List[Tuple(int, int)]:
+def sorted_chain(*ranges: Iterable[Tuple[int, int]]) -> List[Tuple[int, int]]:
     return sorted(itertools.chain(*ranges))
 
 
-def generate_range_checker(sorted_ranges):
+def generate_range_checker(
+    sorted_ranges: List[Tuple[int, int]],
+) -> Callable[[str], bool]:
 
     ranges_start = [t[0] for t in sorted_ranges]
 
-    def _char_in_range(char):
+    def _char_in_range(char: str) -> bool:
         code_point = ord(char)
 
         # 1. find a range such that (start, end), start <= code_point.
@@ -27,9 +29,9 @@ def generate_range_checker(sorted_ranges):
     return _char_in_range
 
 
-def fullwidth_to_halfwidth(seq):
+def fullwidth_to_halfwidth(seq: str) -> str:
 
-    def convert(char):
+    def convert(char: str):
         code_point = ord(char)
         if not (0xFF01 <= code_point <= 0xFF5E):
             return char
@@ -38,7 +40,7 @@ def fullwidth_to_halfwidth(seq):
     return ''.join(map(convert, seq))
 
 
-def _flatten_nested(seq, ret=None):
+def _flatten_nested(seq: Iterable[Any], ret: List[Any] = None) -> List[Any]:
     if ret is None:
         ret = []
     for item in seq:
@@ -49,14 +51,20 @@ def _flatten_nested(seq, ret=None):
     return ret
 
 
-def _append_code_points_to_text(text, *code_points):
+def _append_code_points_to_text(
+    text: str, *code_points: int
+) -> List[str]:
+
     return [
         text + chr(cp)
         for cp in code_points
     ]
 
 
-def _append_code_points_to_seq(seq, *code_points):
+def _append_code_points_to_seq(
+    seq: Union[str, List[str]], *code_points: int,
+) -> List[str]:
+
     if isinstance(seq, str):
         seq = [seq]
     return _flatten_nested([
@@ -65,11 +73,11 @@ def _append_code_points_to_seq(seq, *code_points):
     ])
 
 
-def _single_quotation(seq):
+def _single_quotation(seq: Union[str, List[str]]):
     return _append_code_points_to_seq(seq, 0xFF07, 0x2019, 0x2032)
 
 
-def _double_quotation(seq):
+def _double_quotation(seq: Union[str, List[str]]):
     return _append_code_points_to_seq(seq, 0xFF02, 0x201D, 0x2033)
 
 
