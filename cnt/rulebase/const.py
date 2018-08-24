@@ -1,8 +1,9 @@
 import itertools
 import bisect
+from typing import List, Tuple
 
 
-def sorted_chain(*ranges):
+def sorted_chain(*ranges: List[Tuple(int, int)]) -> List[Tuple(int, int)]:
     return sorted(itertools.chain(*ranges))
 
 
