@@ -31,7 +31,7 @@ def generate_range_checker(
 
 def fullwidth_to_halfwidth(seq: str) -> str:
 
-    def convert(char: str):
+    def convert(char: str) -> str:
         code_point = ord(char)
         if not (0xFF01 <= code_point <= 0xFF5E):
             return char
@@ -73,11 +73,11 @@ def _append_code_points_to_seq(
     ])
 
 
-def _single_quotation(seq: Union[str, List[str]]):
+def _single_quotation(seq: Union[str, List[str]]) -> List[str]:
     return _append_code_points_to_seq(seq, 0xFF07, 0x2019, 0x2032)
 
 
-def _double_quotation(seq: Union[str, List[str]]):
+def _double_quotation(seq: Union[str, List[str]]) -> List[str]:
     return _append_code_points_to_seq(seq, 0xFF02, 0x201D, 0x2033)
 
 
