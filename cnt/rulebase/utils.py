@@ -1,16 +1,19 @@
 import itertools
 import bisect
+from typing import Iterable, List, Tuple, Callable
 
 
-def sorted_chain(*ranges):
+def sorted_chain(*ranges: Iterable[Tuple[int, int]]) -> List[Tuple[int, int]]:
     return sorted(itertools.chain(*ranges))
 
 
-def generate_range_checker(sorted_ranges):
+def generate_range_checker(
+    sorted_ranges: List[Tuple[int, int]],
+) -> Callable[[str], bool]:
 
     ranges_start = [t[0] for t in sorted_ranges]
 
-    def _char_in_range(char):
+    def _char_in_range(char: str) -> bool:
         code_point = ord(char)
 
         # 1. find a range such that (start, end), start <= code_point.
@@ -26,9 +29,9 @@ def generate_range_checker(sorted_ranges):
     return _char_in_range
 
 
-def fullwidth_to_halfwidth(seq):
+def fullwidth_to_halfwidth(seq: str) -> str:
 
-    def convert(char):
+    def convert(char: str) -> str:
         code_point = ord(char)
         if not (0xFF01 <= code_point <= 0xFF5E):
             return char

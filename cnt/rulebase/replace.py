@@ -1,4 +1,5 @@
 import re
+from typing import List, Tuple, Callable
 
 from .const import (
     CHINESE_CHARS,
@@ -8,19 +9,21 @@ from .const import (
 )
 
 
-def generate_replacer(sorted_ranges):
+def generate_replacer(
+    sorted_ranges: List[Tuple[int, int]],
+) -> Callable[[str, str], str]:
 
-    def ranges_to_pattern(sorted_ranges):
+    def ranges_to_pattern(sorted_ranges: List[Tuple[int, int]]) -> str:
         inner = [
             rf'{chr(lb)}-{chr(ub)}'
             for lb, ub in sorted_ranges
         ]
-        inner = ''.join(inner)
-        return rf'[{inner}]+'
+        joined_inner = ''.join(inner)
+        return rf'[{joined_inner}]+'
 
     pattern = re.compile(ranges_to_pattern(sorted_ranges), re.UNICODE)
 
-    def replacer(text, repl=''):
+    def replacer(text: str, repl: str = '') -> str:
         return pattern.sub(repl, text)
 
     return replacer

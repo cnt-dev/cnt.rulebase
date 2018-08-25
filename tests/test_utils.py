@@ -1,4 +1,4 @@
-from cnt.rulebase.utils import fullwidth_to_halfwidth
+from cnt.rulebase import fullwidth_to_halfwidth
 
 
 def test_fullwidth_to_halfwidth():

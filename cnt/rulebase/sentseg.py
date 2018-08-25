@@ -1,4 +1,5 @@
 import re
+from typing import List, Tuple, Any
 
 from .const import (
     SENTENCE_ENDS,
@@ -11,6 +12,8 @@ from .const import (
 from .common import (
     generate_ranges_marker,
     generate_segmenter,
+    MARKS_GROUP_TYPE,
+    SEGMENTER_RET_TYPE,
 )
 
 import ahocorasick
@@ -24,24 +27,21 @@ SENTSEG_RANGES = sorted_chain(
 )
 
 
-def mark_whitespaces(
-    text,
-    _whitespace_pattern=re.compile(r'\s+'),
-):
+_WHITESPACE_PATTERN = re.compile(r'\s+')
+
+
+def mark_whitespaces(text: str) -> List[bool]:
     '''
     return a list of marks for identifying whitespaces.
     '''
     marks = [False] * len(text)
-    for match in _whitespace_pattern.finditer(text):
+    for match in _WHITESPACE_PATTERN.finditer(text):
         start, end = match.span()
         marks[start:end] = (True,) * (end - start)
     return marks
 
 
-mark_extended_chinese_chars = generate_ranges_marker(SENTSEG_RANGES)
-
-
-def _build_ac_automation(keys):
+def _build_ac_automation(keys: List[str]) -> Any:
     ac = ahocorasick.Automaton()
     for idx, key in enumerate(keys):
         ac.add_word(key, (idx, key))
@@ -49,38 +49,50 @@ def _build_ac_automation(keys):
     return ac
 
 
-def mark_sentence_endings(
-    text,
-    _ac_automation=_build_ac_automation(SENTENCE_ENDS),
-):
+def _meta_mark_sentence_endings(
+    text: str,
+    ac_automation: Any,
+) -> List[bool]:
+
     marks = [False] * len(text)
-    for end, (_, key) in _ac_automation.iter(text):
+    for end, (_, key) in ac_automation.iter(text):
         end += 1
         start = end - len(key)
         marks[start:end] = (True,) * (end - start)
     return marks
 
 
-def mark_sentence_endings_with_comma(
-    text,
-    _ac_automation=_build_ac_automation(
-        SENTENCE_ENDS + [chr(0xFF0C), chr(0x201A), ','],
-    ),
-):
-    return mark_sentence_endings(text, _ac_automation=_ac_automation)
+AC_AUTOMATION = _build_ac_automation(SENTENCE_ENDS)
+
+
+def mark_sentence_endings(text: str) -> List[bool]:
+    return _meta_mark_sentence_endings(text, AC_AUTOMATION)
+
+
+AC_AUTOMATION_WITH_COMMA = _build_ac_automation(
+    SENTENCE_ENDS + [chr(0xFF0C), chr(0x201A), ','],
+)
+
+
+def mark_sentence_endings_with_comma(text: str) -> List[bool]:
+    return _meta_mark_sentence_endings(text, AC_AUTOMATION_WITH_COMMA)
 
 
 def sentseg_start_cond_fn(
-    start,
-    whitespaces, extended_chinese_chars, sentence_endings,
-):
+    start: int,
+    marks_group: MARKS_GROUP_TYPE,
+) -> bool:
+
+    whitespaces, extended_chinese_chars, sentence_endings = marks_group
     return extended_chinese_chars[start]
 
 
 def sentseg_end_cond_fn(
-    end,
-    whitespaces, extended_chinese_chars, sentence_endings,
-):
+    end: int,
+    marks_group: MARKS_GROUP_TYPE,
+) -> Tuple[bool, int]:
+
+    whitespaces, extended_chinese_chars, sentence_endings = marks_group
     if not (extended_chinese_chars[end] or whitespaces[end]):
         return True, end
     elif sentence_endings[end]:
@@ -89,6 +101,9 @@ def sentseg_end_cond_fn(
         return True, end
     else:
         return False, end + 1
+
+
+mark_extended_chinese_chars = generate_ranges_marker(SENTSEG_RANGES)
 
 
 _sentseg = generate_segmenter(
@@ -111,7 +126,7 @@ _sentseg_with_comma = generate_segmenter(
 )
 
 
-def sentseg(text, enable_comma=False):
+def sentseg(text: str, enable_comma: bool = False) -> SEGMENTER_RET_TYPE:
     if enable_comma:
         return _sentseg_with_comma(text)
     else:

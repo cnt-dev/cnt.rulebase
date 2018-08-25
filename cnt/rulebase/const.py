@@ -1,7 +1,9 @@
+from typing import Union, Iterable, List, Any
+
 from .utils import sorted_chain, fullwidth_to_halfwidth
 
 
-def _flatten_nested(seq, ret=None):
+def _flatten_nested(seq: Iterable[Any], ret: List[Any] = None) -> List[Any]:
     if ret is None:
         ret = []
     for item in seq:
@@ -12,14 +14,20 @@ def _flatten_nested(seq, ret=None):
     return ret
 
 
-def _append_code_points_to_text(text, *code_points):
+def _append_code_points_to_text(
+    text: str, *code_points: int
+) -> List[str]:
+
     return [
         text + chr(cp)
         for cp in code_points
     ]
 
 
-def _append_code_points_to_seq(seq, *code_points):
+def _append_code_points_to_seq(
+    seq: Union[str, List[str]], *code_points: int,
+) -> List[str]:
+
     if isinstance(seq, str):
         seq = [seq]
     return _flatten_nested([
@@ -28,11 +36,11 @@ def _append_code_points_to_seq(seq, *code_points):
     ])
 
 
-def _single_quotation(seq):
+def _single_quotation(seq: Union[str, List[str]]) -> List[str]:
     return _append_code_points_to_seq(seq, 0xFF07, 0x2019, 0x2032)
 
 
-def _double_quotation(seq):
+def _double_quotation(seq: Union[str, List[str]]) -> List[str]:
     return _append_code_points_to_seq(seq, 0xFF02, 0x201D, 0x2033)
 
 
