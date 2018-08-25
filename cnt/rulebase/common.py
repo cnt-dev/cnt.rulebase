@@ -1,5 +1,5 @@
 from typing import Callable, List, Tuple
-from .const import generate_range_checker
+from .utils import generate_range_checker
 
 
 MARKER_TYPE = Callable[

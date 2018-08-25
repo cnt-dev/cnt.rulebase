@@ -16,3 +16,4 @@ from .replace import (
     replace_digits,
     replace_delimiters,
 )
+from .utils import fullwidth_to_halfwidth
