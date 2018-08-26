@@ -1,9 +1,13 @@
-from typing import Union, Iterable, List, Any
+from typing import Union, Iterable, List, Any, Optional
 
 from .utils import sorted_chain, fullwidth_to_halfwidth
 
 
-def _flatten_nested(seq: Iterable[Any], ret: List[Any] = None) -> List[Any]:
+def _flatten_nested(
+    seq: Iterable[Any],
+    ret: Optional[List[Any]] = None,
+) -> List[Any]:
+
     if ret is None:
         ret = []
     for item in seq:
