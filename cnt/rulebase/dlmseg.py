@@ -1,5 +1,5 @@
 """Delimiter segmenter."""
-from typing import Tuple
+from typing import List, Tuple
 
 from cnt.rulebase import const, common, utils
 
@@ -11,14 +11,14 @@ SEGMENT_RANGES = utils.sorted_chain(
 
 
 def _dlmseg_start_cond_fn(start: int,
-                          marks_group: common.MarkGroupType) -> bool:
-    segments, = marks_group
+                          marks_group: common.MarksGroupType) -> bool:
+    segments: List[bool] = marks_group[0]
     return segments[start]
 
 
 def _dlmseg_end_cond_fn(end: int,
-                        marks_group: common.MarkGroupType) -> Tuple[bool, int]:
-    segments, = marks_group
+                        marks_group: common.MarksGroupType) -> Tuple[bool, int]:
+    segments: List[bool] = marks_group[0]
     if segments[end]:
         return False, end + 1
     return True, end

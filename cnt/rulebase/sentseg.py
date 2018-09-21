@@ -64,13 +64,13 @@ def _mark_sentence_endings_with_comma(text: str) -> List[bool]:
 
 
 def _sentseg_start_cond_fn(start: int,
-                           marks_group: common.MarkGroupType) -> bool:
-    _, extended_chinese_chars, _ = marks_group
+                           marks_group: common.MarksGroupType) -> bool:
+    extended_chinese_chars: List[bool] = marks_group[1]
     return extended_chinese_chars[start]
 
 
 def _sentseg_end_cond_fn(end: int,
-                         marks_group: common.MarkGroupType) -> Tuple[bool, int]:
+                         marks_group: common.MarksGroupType) -> Tuple[bool, int]:
     whitespaces, extended_chinese_chars, sentence_endings = marks_group
     if not (extended_chinese_chars[end] or whitespaces[end]):
         return True, end

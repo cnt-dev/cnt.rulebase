@@ -4,9 +4,9 @@ from .utils import generate_range_checker
 
 MarkerType = Callable[[str], List[bool]]
 
-MarkGroupType = List[List[bool]]
-StartCondFnType = Callable[[int, MarkGroupType], bool]
-EndCondFnType = Callable[[int, MarkGroupType], Tuple[bool, int]]
+MarksGroupType = List[List[bool]]
+StartCondFnType = Callable[[int, MarksGroupType], bool]
+EndCondFnType = Callable[[int, MarksGroupType], Tuple[bool, int]]
 
 SegmenterRetType = List[Tuple[str, Tuple[int, int]]]
 SegmenterType = Callable[[str], SegmenterRetType]
