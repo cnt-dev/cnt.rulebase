@@ -7,10 +7,10 @@ import ahocorasick
 from cnt.rulebase import const, common, utils
 
 SENTSEG_RANGES = utils.sorted_chain(
-    const.CHINESE_CHARS,
-    const.ENGLISH_CHARS,
-    const.DIGITS,
-    const.DELIMITERS,
+        const.CHINESE_CHARS,
+        const.ENGLISH_CHARS,
+        const.DIGITS,
+        const.DELIMITERS,
 )
 
 _WHITESPACE_PATTERN = re.compile(r'\s+')
@@ -55,22 +55,20 @@ def _mark_sentence_endings(text: str) -> List[bool]:
     return _meta_mark_sentence_endings(text, AC_AUTOMATION)
 
 
-AC_AUTOMATION_WITH_COMMA = _build_ac_automation(
-    const.SENTENCE_ENDS + [chr(0xFF0C), chr(0x201A), ','])
+AC_AUTOMATION_WITH_COMMA = _build_ac_automation(const.SENTENCE_ENDS +
+                                                [chr(0xFF0C), chr(0x201A), ','])
 
 
 def _mark_sentence_endings_with_comma(text: str) -> List[bool]:
     return _meta_mark_sentence_endings(text, AC_AUTOMATION_WITH_COMMA)
 
 
-def _sentseg_start_cond_fn(start: int,
-                           marks_group: common.MarksGroupType) -> bool:
+def _sentseg_start_cond_fn(start: int, marks_group: common.MarksGroupType) -> bool:
     extended_chinese_chars: List[bool] = marks_group[1]
     return extended_chinese_chars[start]
 
 
-def _sentseg_end_cond_fn(end: int,
-                         marks_group: common.MarksGroupType) -> Tuple[bool, int]:
+def _sentseg_end_cond_fn(end: int, marks_group: common.MarksGroupType) -> Tuple[bool, int]:
     whitespaces, extended_chinese_chars, sentence_endings = marks_group
     if not (extended_chinese_chars[end] or whitespaces[end]):
         return True, end
@@ -85,22 +83,22 @@ def _sentseg_end_cond_fn(end: int,
 _mark_extended_chinese_chars = common.generate_ranges_marker(SENTSEG_RANGES)
 
 _sentseg = common.generate_segmenter(
-    [
-        _mark_whitespaces,
-        _mark_extended_chinese_chars,
-        _mark_sentence_endings,
-    ],
-    _sentseg_start_cond_fn,
-    _sentseg_end_cond_fn,
+        [
+                _mark_whitespaces,
+                _mark_extended_chinese_chars,
+                _mark_sentence_endings,
+        ],
+        _sentseg_start_cond_fn,
+        _sentseg_end_cond_fn,
 )
 _sentseg_with_comma = common.generate_segmenter(
-    [
-        _mark_whitespaces,
-        _mark_extended_chinese_chars,
-        _mark_sentence_endings_with_comma,
-    ],
-    _sentseg_start_cond_fn,
-    _sentseg_end_cond_fn,
+        [
+                _mark_whitespaces,
+                _mark_extended_chinese_chars,
+                _mark_sentence_endings_with_comma,
+        ],
+        _sentseg_start_cond_fn,
+        _sentseg_end_cond_fn,
 )
 
 

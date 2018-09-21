@@ -27,8 +27,7 @@ def generate_ranges_marker(ranges: List[Tuple[int, int]]) -> MarkerType:
     return ranges_marker
 
 
-def generate_segmenter(markers: List[MarkerType],
-                       start_cond_fn: StartCondFnType,
+def generate_segmenter(markers: List[MarkerType], start_cond_fn: StartCondFnType,
                        end_cond_fn: EndCondFnType) -> SegmenterType:
     """Create segmenter."""
 
@@ -40,8 +39,8 @@ def generate_segmenter(markers: List[MarkerType],
 
         def _push_to_sentence(start: int, end: int) -> int:
             sentences.append((
-                text[start:end],
-                (start, end),
+                    text[start:end],
+                    (start, end),
             ))
             return end
 
