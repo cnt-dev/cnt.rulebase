@@ -1,53 +1,39 @@
+"""Common operations"""
 from typing import Callable, List, Tuple
 from .utils import generate_range_checker
 
+MarkerType = Callable[[str], List[bool]]
 
-MARKER_TYPE = Callable[
-    [str],
-    List[bool],
-]
+MarkGroupType = List[List[bool]]
+StartCondFnType = Callable[[int, MarkGroupType], bool]
+EndCondFnType = Callable[[int, MarkGroupType], Tuple[bool, int]]
 
-MARKS_GROUP_TYPE = List[List[bool]]
-START_COND_FN_TYPE = Callable[
-    [int, MARKS_GROUP_TYPE],
-    bool,
-]
-END_COND_FN_TYPE = Callable[
-    [int, MARKS_GROUP_TYPE],
-    Tuple[bool, int],
-]
-
-SEGMENTER_RET_TYPE = List[Tuple[str, Tuple[int, int]]]
-SEGMENTER_TYPE = Callable[[str], SEGMENTER_RET_TYPE]
+SegmenterRetType = List[Tuple[str, Tuple[int, int]]]
+SegmenterType = Callable[[str], SegmenterRetType]
 
 
-def generate_ranges_marker(
-    ranges: List[Tuple[int, int]],
-) -> MARKER_TYPE:
-
+def generate_ranges_marker(ranges: List[Tuple[int, int]]) -> MarkerType:
+    """Create range marker."""
     _ranges_checker = generate_range_checker(ranges)
 
     def ranges_marker(text: str) -> List[bool]:
 
         marks = [False] * len(text)
-        for idx, c in enumerate(text):
-            if _ranges_checker(c):
+        for idx, char in enumerate(text):
+            if _ranges_checker(char):
                 marks[idx] = True
         return marks
 
     return ranges_marker
 
 
-def generate_segmenter(
-    markers: List[MARKER_TYPE],
-    start_cond_fn: START_COND_FN_TYPE,
-    end_cond_fn: END_COND_FN_TYPE,
-) -> SEGMENTER_TYPE:
+def generate_segmenter(markers: List[MarkerType],
+                       start_cond_fn: StartCondFnType,
+                       end_cond_fn: EndCondFnType) -> SegmenterType:
+    """Create segmenter."""
 
     def segmenter(text: str) -> List[Tuple[str, Tuple[int, int]]]:
-        marks_group = [
-            m(text) for m in markers
-        ]
+        marks_group = [m(text) for m in markers]
 
         # two pointers move.
         sentences = []
@@ -59,23 +45,23 @@ def generate_segmenter(
             ))
             return end
 
-        TEXTLEN = len(text)
+        len_text = len(text)
         start, end = 0, 0
-        while start < TEXTLEN:
+        while start < len_text:
             if not start_cond_fn(start, marks_group):
                 start += 1
                 continue
 
             end = start + 1
-            while end < TEXTLEN:
+            while end < len_text:
                 should_break, end = end_cond_fn(end, marks_group)
                 if should_break:
                     break
 
             start = _push_to_sentence(start, end)
 
-        if start < TEXTLEN:
-            _push_to_sentence(start, TEXTLEN)
+        if start < len_text:
+            _push_to_sentence(start, len_text)
 
         return sentences
 
