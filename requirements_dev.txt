@@ -9,4 +9,4 @@ Sphinx==1.8.0
 twine==1.11.0
 pytest==3.8.0
 pytest-runner==4.2
-mypy==0.620
+mypy==0.630
