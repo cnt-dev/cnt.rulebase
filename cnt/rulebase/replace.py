@@ -8,9 +8,9 @@ from cnt.rulebase import const
 def _generate_replacer(sorted_ranges: List[Tuple[int, int]]) -> Callable[[str, str], str]:
 
     def ranges_to_pattern(sorted_ranges: List[Tuple[int, int]]) -> str:
-        inner = [rf'{chr(lb)}-{chr(ub)}' for lb, ub in sorted_ranges]
+        inner = [f'{chr(lb)}-{chr(ub)}' for lb, ub in sorted_ranges]
         joined_inner = ''.join(inner)
-        return rf'[{joined_inner}]+'
+        return f'[{joined_inner}]+'
 
     pattern = re.compile(ranges_to_pattern(sorted_ranges), re.UNICODE)
 
