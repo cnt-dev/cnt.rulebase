@@ -1,36 +1,22 @@
+"""Sentence segmenter."""
 import re
 from typing import List, Tuple, Any
 
-from .const import (
-    SENTENCE_ENDS,
-    CHINESE_CHARS,
-    ENGLISH_CHARS,
-    DIGITS,
-    DELIMITERS,
-    sorted_chain,
-)
-from .common import (
-    generate_ranges_marker,
-    generate_segmenter,
-    MARKS_GROUP_TYPE,
-    SEGMENTER_RET_TYPE,
-)
-
 import ahocorasick
 
+from cnt.rulebase import const, common, utils
 
-SENTSEG_RANGES = sorted_chain(
-    CHINESE_CHARS,
-    ENGLISH_CHARS,
-    DIGITS,
-    DELIMITERS,
+SENTSEG_RANGES = utils.sorted_chain(
+        const.CHINESE_CHARS,
+        const.ENGLISH_CHARS,
+        const.DIGITS,
+        const.DELIMITERS,
 )
-
 
 _WHITESPACE_PATTERN = re.compile(r'\s+')
 
 
-def mark_whitespaces(text: str) -> List[bool]:
+def _mark_whitespaces(text: str) -> List[bool]:
     '''
     return a list of marks for identifying whitespaces.
     '''
@@ -42,16 +28,16 @@ def mark_whitespaces(text: str) -> List[bool]:
 
 
 def _build_ac_automation(keys: List[str]) -> Any:
-    ac = ahocorasick.Automaton()
+    atm = ahocorasick.Automaton()  # pylint: disable=c-extension-no-member
     for idx, key in enumerate(keys):
-        ac.add_word(key, (idx, key))
-    ac.make_automaton()
-    return ac
+        atm.add_word(key, (idx, key))
+    atm.make_automaton()
+    return atm
 
 
 def _meta_mark_sentence_endings(
-    text: str,
-    ac_automation: Any,
+        text: str,
+        ac_automation: Any,
 ) -> List[bool]:
 
     marks = [False] * len(text)
@@ -62,72 +48,62 @@ def _meta_mark_sentence_endings(
     return marks
 
 
-AC_AUTOMATION = _build_ac_automation(SENTENCE_ENDS)
+AC_AUTOMATION = _build_ac_automation(const.SENTENCE_ENDS)
 
 
-def mark_sentence_endings(text: str) -> List[bool]:
+def _mark_sentence_endings(text: str) -> List[bool]:
     return _meta_mark_sentence_endings(text, AC_AUTOMATION)
 
 
-AC_AUTOMATION_WITH_COMMA = _build_ac_automation(
-    SENTENCE_ENDS + [chr(0xFF0C), chr(0x201A), ','],
-)
+AC_AUTOMATION_WITH_COMMA = _build_ac_automation(const.SENTENCE_ENDS +
+                                                [chr(0xFF0C), chr(0x201A), ','])
 
 
-def mark_sentence_endings_with_comma(text: str) -> List[bool]:
+def _mark_sentence_endings_with_comma(text: str) -> List[bool]:
     return _meta_mark_sentence_endings(text, AC_AUTOMATION_WITH_COMMA)
 
 
-def sentseg_start_cond_fn(
-    start: int,
-    marks_group: MARKS_GROUP_TYPE,
-) -> bool:
-
-    whitespaces, extended_chinese_chars, sentence_endings = marks_group
+def _sentseg_start_cond_fn(start: int, marks_group: common.MarksGroupType) -> bool:
+    extended_chinese_chars: List[bool] = marks_group[1]
     return extended_chinese_chars[start]
 
 
-def sentseg_end_cond_fn(
-    end: int,
-    marks_group: MARKS_GROUP_TYPE,
-) -> Tuple[bool, int]:
-
+def _sentseg_end_cond_fn(end: int, marks_group: common.MarksGroupType) -> Tuple[bool, int]:
     whitespaces, extended_chinese_chars, sentence_endings = marks_group
     if not (extended_chinese_chars[end] or whitespaces[end]):
         return True, end
-    elif sentence_endings[end]:
+    if sentence_endings[end]:
         while end < len(sentence_endings) and sentence_endings[end]:
             end += 1
         return True, end
-    else:
-        return False, end + 1
+    return False, end + 1
 
 
-mark_extended_chinese_chars = generate_ranges_marker(SENTSEG_RANGES)
+# pylint: disable=invalid-name
+_mark_extended_chinese_chars = common.generate_ranges_marker(SENTSEG_RANGES)
 
-
-_sentseg = generate_segmenter(
-    [
-        mark_whitespaces,
-        mark_extended_chinese_chars,
-        mark_sentence_endings,
-    ],
-    sentseg_start_cond_fn,
-    sentseg_end_cond_fn,
+_sentseg = common.generate_segmenter(
+        [
+                _mark_whitespaces,
+                _mark_extended_chinese_chars,
+                _mark_sentence_endings,
+        ],
+        _sentseg_start_cond_fn,
+        _sentseg_end_cond_fn,
 )
-_sentseg_with_comma = generate_segmenter(
-    [
-        mark_whitespaces,
-        mark_extended_chinese_chars,
-        mark_sentence_endings_with_comma,
-    ],
-    sentseg_start_cond_fn,
-    sentseg_end_cond_fn,
+_sentseg_with_comma = common.generate_segmenter(
+        [
+                _mark_whitespaces,
+                _mark_extended_chinese_chars,
+                _mark_sentence_endings_with_comma,
+        ],
+        _sentseg_start_cond_fn,
+        _sentseg_end_cond_fn,
 )
 
 
-def sentseg(text: str, enable_comma: bool = False) -> SEGMENTER_RET_TYPE:
+def sentseg(text: str, enable_comma: bool = False) -> common.SegmenterRetType:
+    """2 modes."""
     if enable_comma:
         return _sentseg_with_comma(text)
-    else:
-        return _sentseg(text)
+    return _sentseg(text)

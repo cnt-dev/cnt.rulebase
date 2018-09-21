@@ -1,23 +1,14 @@
+"""Replacers"""
 import re
 from typing import List, Tuple, Callable
 
-from .const import (
-    CHINESE_CHARS,
-    ENGLISH_CHARS,
-    DIGITS,
-    DELIMITERS,
-)
+from cnt.rulebase import const
 
 
-def generate_replacer(
-    sorted_ranges: List[Tuple[int, int]],
-) -> Callable[[str, str], str]:
+def _generate_replacer(sorted_ranges: List[Tuple[int, int]]) -> Callable[[str, str], str]:
 
     def ranges_to_pattern(sorted_ranges: List[Tuple[int, int]]) -> str:
-        inner = [
-            rf'{chr(lb)}-{chr(ub)}'
-            for lb, ub in sorted_ranges
-        ]
+        inner = [rf'{chr(lb)}-{chr(ub)}' for lb, ub in sorted_ranges]
         joined_inner = ''.join(inner)
         return rf'[{joined_inner}]+'
 
@@ -29,7 +20,8 @@ def generate_replacer(
     return replacer
 
 
-replace_chinese_chars = generate_replacer(CHINESE_CHARS)
-replace_english_chars = generate_replacer(ENGLISH_CHARS)
-replace_digits = generate_replacer(DIGITS)
-replace_delimiters = generate_replacer(DELIMITERS)
+# pylint: disable=invalid-name
+replace_chinese_chars = _generate_replacer(const.CHINESE_CHARS)
+replace_english_chars = _generate_replacer(const.ENGLISH_CHARS)
+replace_digits = _generate_replacer(const.DIGITS)
+replace_delimiters = _generate_replacer(const.DELIMITERS)
