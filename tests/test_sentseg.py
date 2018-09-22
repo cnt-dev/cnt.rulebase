@@ -2,7 +2,6 @@ import cnt.rulebase.const as const
 import cnt.rulebase.sentence_segmenter as sentseg
 
 
-
 def test_sentseg_ends():
     assert len(const.SENTENCE_ENDS) == len(set(const.SENTENCE_ENDS))
 
@@ -40,51 +39,51 @@ def test_no_overlapping_char_ranges():
 def test_mark_whitespaces():
     text = 'aa  \n a\ta '
     assert [
-        False,
-        False,
-        True,
-        True,
-        True,
-        True,
-        False,
-        True,
-        False,
-        True,
+            False,
+            False,
+            True,
+            True,
+            True,
+            True,
+            False,
+            True,
+            False,
+            True,
     ] == sentseg._mark_whitespaces(text)
 
 
 def test_mark_extended_chinese_chars():
     text = '  测试。 \tabc '
     assert [
-        False,
-        False,
-        True,
-        True,
-        True,
-        False,
-        False,
-        True,
-        True,
-        True,
-        False,
+            False,
+            False,
+            True,
+            True,
+            True,
+            False,
+            False,
+            True,
+            True,
+            True,
+            False,
     ] == sentseg._mark_extended_chinese_chars(text)
 
 
 def test_mark_sentence_endings():
     text = 'a。"b，c!？！”d!！!'
     assert [
-        False,
-        True,
-        True,
-        False,
-        False,
-        False,
-        True,
-        True,
-        True,
-        True,
-        False,
-        True,
-        True,
-        True,
+            False,
+            True,
+            True,
+            False,
+            False,
+            False,
+            True,
+            True,
+            True,
+            True,
+            False,
+            True,
+            True,
+            True,
     ] == sentseg._mark_sentence_endings(text)
