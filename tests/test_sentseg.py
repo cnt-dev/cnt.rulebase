@@ -1,4 +1,6 @@
-from cnt.rulebase import const, sentseg
+import cnt.rulebase.const as const
+import cnt.rulebase.sentence_segmenter as sentseg
+
 
 
 def test_sentseg_ends():

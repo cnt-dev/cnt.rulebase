@@ -1,4 +1,4 @@
-from cnt.rulebase import replace
+import cnt.rulebase.char_replacer as replace
 
 
 def test_replacers():

@@ -1,4 +1,4 @@
-from cnt.rulebase import dlmseg
+import cnt.rulebase.delimiter_segmenter as dlmseg
 
 
 def test_dlmseg():

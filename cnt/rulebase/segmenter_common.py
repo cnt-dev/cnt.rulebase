@@ -1,6 +1,7 @@
 """Common operations"""
 from typing import Callable, List, Tuple
-from .utils import generate_range_checker
+
+from cnt.rulebase import utils
 
 MarkerType = Callable[[str], List[bool]]
 
@@ -14,7 +15,7 @@ SegmenterType = Callable[[str], SegmenterRetType]
 
 def generate_ranges_marker(ranges: List[Tuple[int, int]]) -> MarkerType:
     """Create range marker."""
-    _ranges_checker = generate_range_checker(ranges)
+    _ranges_checker = utils.generate_range_checker(ranges)
 
     def ranges_marker(text: str) -> List[bool]:
 
