@@ -3,7 +3,7 @@
 
 __author__ = """Hunt Zhan"""
 __email__ = 'huntzhan.dev@gmail.com'
-__version__ = '0.6.2'
+__version__ = '0.6.3'
 
 from cnt.rulebase.sentence_segmenter import sentseg
 from cnt.rulebase.delimiter_segmenter import dlmseg
