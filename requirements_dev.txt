@@ -1,13 +1,19 @@
+# Package.
 pip==18.1
-bumpversion==0.5.3
 wheel==0.32.1
+bumpversion==0.5.3
+
+# Doc.
+Sphinx==1.8.1
 watchdog==0.9.0
+twine==1.12.1
+
+# CI.
+tox==3.5.2
 yapf==0.24.0
 pylint==2.1.1
-tox==3.5.2
-coverage==4.5.1
-Sphinx==1.8.1
-twine==1.12.1
+mypy==0.630
 pytest==3.8.2
 pytest-runner==4.2
-mypy==0.630
+coverage==4.5.1
+numpy==1.15.2
