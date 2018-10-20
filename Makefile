@@ -66,9 +66,9 @@ coverage: ## check code coverage quickly with the default Python
 	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/cnt.rulebase.rst
+	rm -f docs/cnt.rulebase.*
 	rm -f docs/modules.rst
-	sphinx-apidoc --implicit-namespaces -o docs/ cnt
+	sphinx-apidoc --implicit-namespaces --separate -o docs/ cnt
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
