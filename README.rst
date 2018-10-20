@@ -6,8 +6,8 @@ cnt.rulebase
 .. image:: https://img.shields.io/pypi/v/cnt.rulebase.svg
         :target: https://pypi.python.org/pypi/cnt.rulebase
 
-.. image:: https://img.shields.io/travis/huntzhan/cnt.rulebase.svg
-        :target: https://travis-ci.org/huntzhan/cnt.rulebase
+.. image:: https://img.shields.io/travis/cnt-dev/cnt.rulebase.svg
+        :target: https://travis-ci.org/cnt-dev/cnt.rulebase
 
 .. image:: https://readthedocs.org/projects/cnt-rulebase/badge/?version=latest
         :target: https://cnt-rulebase.readthedocs.io/en/latest/?badge=latest
