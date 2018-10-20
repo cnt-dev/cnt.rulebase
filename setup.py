@@ -46,6 +46,7 @@ setup(
     packages=['cnt.rulebase'],
     test_suite='tests',
     tests_require=test_requirements,
+    extras_require={'test': test_requirements},
     url='https://github.com/huntzhan/cnt.rulebase',
     version='0.6.4',
     zip_safe=False,
