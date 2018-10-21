@@ -1,4 +1,6 @@
-"""Constants."""
+"""
+All the constants are defined here.
+"""
 from typing import Union, Iterable, List, Any, Optional
 
 from cnt.rulebase import utils
@@ -25,43 +27,47 @@ def _append_code_points_to_seq(seq: Union[str, List[str]], *code_points: int) ->
     return _flatten_nested([_append_code_points_to_text(text, *code_points) for text in seq])
 
 
-def _single_quotation(seq: Union[str, List[str]]) -> List[str]:
+def _append_single_quotation(seq: Union[str, List[str]]) -> List[str]:
     return _append_code_points_to_seq(seq, 0xFF07, 0x2019, 0x2032)
 
 
-def _double_quotation(seq: Union[str, List[str]]) -> List[str]:
+def _append_double_quotation(seq: Union[str, List[str]]) -> List[str]:
     return _append_code_points_to_seq(seq, 0xFF02, 0x201D, 0x2033)
 
 
-SENTENCE_ENDS = _flatten_nested([
-        # size 3.
-        _double_quotation('？！'),
-        _double_quotation('……'),
-        _double_quotation(_single_quotation('。')),
-        _double_quotation(_single_quotation('！')),
+def _generate_sentence_ends():
+    # mostly fullwidth endings.
+    ends = _flatten_nested([
+            # size 3.
+            _append_double_quotation('？！'),
+            _append_double_quotation('……'),
+            _append_double_quotation(_append_single_quotation('。')),
+            _append_double_quotation(_append_single_quotation('！')),
 
-        # size 2.
-        _double_quotation('。'),
-        _double_quotation('！'),
-        _double_quotation('？'),
-        _double_quotation('；'),
-        '？！',
+            # size 2.
+            _append_double_quotation('。'),
+            _append_double_quotation('！'),
+            _append_double_quotation('？'),
+            _append_double_quotation('；'),
+            '？！',
 
-        # size 1.
-        '…',
-        '。',
-        '！',
-        '？',
-        '；',
-])
-# add normalized endings.
-SENTENCE_ENDS = _flatten_nested(
-        [set((
-                end,
-                utils.fullwidth_to_halfwidth(end),
-        )) for end in SENTENCE_ENDS])
+            # size 1.
+            '…',
+            '。',
+            '！',
+            '？',
+            '；',
+    ])
+    # add corresponding halfwidth.
+    ends = _flatten_nested([set((end, utils.fullwidth_to_halfwidth(end))) for end in ends])
 
-# English Chars.
+    return ends
+
+
+#: For detecting sentence endings.
+SENTENCE_ENDS = _generate_sentence_ends()
+
+#: English Chars.
 ENGLISH_CHARS = utils.sorted_chain(
         # ASCII_ALPHA_RANGES
         [
@@ -74,7 +80,7 @@ ENGLISH_CHARS = utils.sorted_chain(
                 (0xFF41, 0xFF5A),
         ])
 
-# Digits.
+#: Digits.
 DIGITS = utils.sorted_chain(
         # ASCII_DIGIT_RANGES
         [
@@ -86,7 +92,7 @@ DIGITS = utils.sorted_chain(
         ],
 )
 
-# Delimiters.
+#: Delimiters.
 DELIMITERS = utils.sorted_chain(
         # ASCII_DELIMITERS_RANGES
         [
@@ -118,13 +124,14 @@ DELIMITERS = utils.sorted_chain(
         ],
 )
 
-# Chinese Chars.
-# pull from https://www.qqxiuzi.cn/zh/hanzi-unicode-bianma.php
-# notice 3007 a delimiter, hence should not be included.
-#
-# lines = '''copy paste'''
-# [l.split('\t') for l in lines.strip().split('\n')]
-#
+#: Chinese Chars.
+#: Pulled from https://www.qqxiuzi.cn/zh/hanzi-unicode-bianma.php
+#: Notice ``3007`` is a delimiter, hence should not be included.
+#:
+#: Range generation::
+#:
+#:  lines = '''copy paste the table here'''
+#:  [l.split('\t') for l in lines.strip().split('\n')]
 CHINESE_CHARS = utils.sorted_chain([
         (0x4E00, 0x9FA5),
         (0x9FA6, 0x9FEF),
