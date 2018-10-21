@@ -35,7 +35,7 @@ def _append_double_quotation(seq: Union[str, List[str]]) -> List[str]:
     return _append_code_points_to_seq(seq, 0xFF02, 0x201D, 0x2033)
 
 
-def _generate_sentence_ends():
+def _generate_sentence_ends() -> List[str]:
     # mostly fullwidth endings.
     ends = _flatten_nested([
             # size 3.
