@@ -37,7 +37,7 @@ Sentence segmentation (see :func:`cnt.rulebase.sentseg` and :func:`cnt.rulebase.
     # Return a generator.
     rulebase.sentseg_lazy(text)
 
-Character filtering (see :obj:`cnt.rulebase.collector`) ::
+Pattern filtering (see :obj:`cnt.rulebase.collector`) ::
 
     text = '」他说:「其实在Wimbledon时最后的胜利也有可能属于我,因为当时打到了第5盘却仍然僵持在20比18的对峙。'
 
@@ -78,7 +78,7 @@ Character filtering (see :obj:`cnt.rulebase.collector`) ::
     ('的对峙', (52, 55))]
 
 
-Character replacement (see :obj:`cnt.rulebase.replacer`) ::
+Pattern replacement (see :obj:`cnt.rulebase.replacer`) ::
 
     text = '」他说:「其实在Wimbledon时最后的胜利也有可能属于我,因为当时打到了第5盘却仍然僵持在20比18的对峙。'
 

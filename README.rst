@@ -29,8 +29,8 @@ Features
 :mod:`cnt.rulebase` is designed as rule-based toolkit for *Chinese* NLP tasks. Supported features:
 
 - Sentence segmentation: :func:`cnt.rulebase.sentseg` and :func:`cnt.rulebase.sentseg_lazy`.
-- Character filtering: :obj:`cnt.rulebase.collector`.
-- Character replacement: :obj:`cnt.rulebase.replacer`.
+- Pattern filtering: :obj:`cnt.rulebase.collector`.
+- Pattern replacement: :obj:`cnt.rulebase.replacer`.
 
 Example :ref:`usage_label`.
 
