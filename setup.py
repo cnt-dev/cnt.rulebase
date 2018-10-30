@@ -48,6 +48,6 @@ setup(
     tests_require=test_requirements,
     extras_require={'test': test_requirements},
     url='https://github.com/cnt-dev/cnt.rulebase',
-    version='0.6.4',
+    version='0.7.0',
     zip_safe=False,
 )
