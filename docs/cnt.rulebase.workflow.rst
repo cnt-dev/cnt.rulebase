@@ -4,12 +4,38 @@ cnt.rulebase.workflow package
 Submodules
 ----------
 
-.. toctree::
+cnt.rulebase.workflow.basic\_workflow module
+--------------------------------------------
 
-   cnt.rulebase.workflow.basic_workflow
-   cnt.rulebase.workflow.exact_match_labeler
-   cnt.rulebase.workflow.interval_labeler
-   cnt.rulebase.workflow.type_annotations
+.. automodule:: cnt.rulebase.workflow.basic_workflow
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cnt.rulebase.workflow.exact\_match\_labeler module
+--------------------------------------------------
+
+.. automodule:: cnt.rulebase.workflow.exact_match_labeler
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cnt.rulebase.workflow.interval\_labeler module
+----------------------------------------------
+
+.. automodule:: cnt.rulebase.workflow.interval_labeler
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cnt.rulebase.workflow.type\_annotations module
+----------------------------------------------
+
+.. automodule:: cnt.rulebase.workflow.type_annotations
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

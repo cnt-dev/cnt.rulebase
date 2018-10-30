@@ -1,7 +1,7 @@
-cnt.rulebase.const.chinese\_chars module
+rulebase.workflow.basic\_workflow module
 ========================================
 
-.. automodule:: cnt.rulebase.const.chinese_chars
+.. automodule:: rulebase.workflow.basic_workflow
     :members:
     :undoc-members:
     :show-inheritance:

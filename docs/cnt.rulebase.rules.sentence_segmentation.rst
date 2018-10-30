@@ -4,10 +4,22 @@ cnt.rulebase.rules.sentence\_segmentation package
 Submodules
 ----------
 
-.. toctree::
+cnt.rulebase.rules.sentence\_segmentation.const module
+------------------------------------------------------
 
-   cnt.rulebase.rules.sentence_segmentation.const
-   cnt.rulebase.rules.sentence_segmentation.sentence_segmenter
+.. automodule:: cnt.rulebase.rules.sentence_segmentation.const
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cnt.rulebase.rules.sentence\_segmentation.sentence\_segmenter module
+--------------------------------------------------------------------
+
+.. automodule:: cnt.rulebase.rules.sentence_segmentation.sentence_segmenter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

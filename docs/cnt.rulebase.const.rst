@@ -4,13 +4,46 @@ cnt.rulebase.const package
 Submodules
 ----------
 
-.. toctree::
+cnt.rulebase.const.chinese\_chars module
+----------------------------------------
 
-   cnt.rulebase.const.chinese_chars
-   cnt.rulebase.const.delimiters
-   cnt.rulebase.const.digits
-   cnt.rulebase.const.english_chars
-   cnt.rulebase.const.utils
+.. automodule:: cnt.rulebase.const.chinese_chars
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cnt.rulebase.const.delimiters module
+------------------------------------
+
+.. automodule:: cnt.rulebase.const.delimiters
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cnt.rulebase.const.digits module
+--------------------------------
+
+.. automodule:: cnt.rulebase.const.digits
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cnt.rulebase.const.english\_chars module
+----------------------------------------
+
+.. automodule:: cnt.rulebase.const.english_chars
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cnt.rulebase.const.utils module
+-------------------------------
+
+.. automodule:: cnt.rulebase.const.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------
