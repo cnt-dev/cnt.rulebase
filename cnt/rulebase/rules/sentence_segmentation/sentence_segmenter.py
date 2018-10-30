@@ -101,7 +101,6 @@ class SentenceSegementationLabelProcessor(workflow.BasicLabelProcessor):
             try:
                 while True:
                     index, labels = next(self.index_labels_generator)
-                    print(index)
 
                     # Detected invalid char.
                     if not labels[SentenceValidCharacterLabeler] and not labels[WhitespaceLabeler]:
