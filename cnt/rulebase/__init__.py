@@ -8,13 +8,13 @@ __version__ = '0.6.4'
 __all__ = [
         'sentseg',
         'sentseg_lazy',
-        'built_in_collector',
-        'built_in_replacer',
+        'collector',
+        'replacer',
 ]
 
 from cnt.rulebase.rules import (
         sentseg,
         sentseg_lazy,
-        built_in_collector,
-        built_in_replacer,
+        built_in_collector as collector,
+        built_in_replacer as replacer,
 )
