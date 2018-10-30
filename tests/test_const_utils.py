@@ -1,4 +1,4 @@
-import cnt.rulebase.utils as utils
+from cnt.rulebase.const import utils
 
 
 def test_fullwidth_to_halfwidth():

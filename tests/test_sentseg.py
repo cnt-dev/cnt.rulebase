@@ -1,14 +1,67 @@
-import cnt.rulebase.const as const
-import cnt.rulebase.sentence_segmenter as sentseg
+from typing import Generator
+
+from cnt.rulebase.rules.sentence_segmentation.sentence_segmenter import (
+        SentenceEndingLabeler,
+        WhitespaceLabeler,
+        SentenceValidCharacterLabeler,
+        sentseg,
+        sentseg_lazy,
+)
 
 
-def test_sentseg_ends():
-    assert len(const.SENTENCE_ENDS) == len(set(const.SENTENCE_ENDS))
+def test_sentence_ending_labler():
+    text = "1。2。”3"
+    labeler = SentenceEndingLabeler(text)
+    result = [labeler.label(idx) for idx in range(len(text))]
+    assert [
+            False,
+            True,
+            False,
+            True,
+            True,
+            False,
+    ] == result
+
+
+def test_whitespace_labeler():
+    text = '1 2\t3'
+    labeler = WhitespaceLabeler(text)
+    result = [labeler.label(idx) for idx in range(len(text))]
+    assert [
+            False,
+            True,
+            False,
+            True,
+            False,
+    ] == result
+
+
+def test_sentence_valid_character_labeler():
+    text = '测试 test 123 !!!'
+    labeler = SentenceValidCharacterLabeler(text)
+    result = [labeler.label(idx) for idx in range(len(text))]
+    assert [
+            True,
+            True,
+            False,
+            True,
+            True,
+            True,
+            True,
+            False,
+            True,
+            True,
+            True,
+            False,
+            True,
+            True,
+            True,
+    ] == result
 
 
 def test_sentseg():
     text = ('测试句子一， 测试。  测试 句子二。 测试句子三！！！')
-    sents = sentseg.sentseg(text)
+    sents = sentseg(text)
 
     assert 3 == len(sents)
 
@@ -25,65 +78,9 @@ def test_sentseg():
     assert '测试句子三！！！' == text[sent3_range[0]:sent3_range[1]]
 
     text = ('a,b，c‚d')
-    assert 4 == len(sentseg.sentseg(text, enable_comma=True))
+    assert 4 == len(sentseg(text, enable_comma_ending=True))
 
 
-def test_no_overlapping_char_ranges():
-    pre_end = -1
-    for start, end in sentseg.SENTSEG_RANGES:
-        assert end >= start
-        assert start > pre_end
-        pre_end = end
-
-
-def test_mark_whitespaces():
-    text = 'aa  \n a\ta '
-    assert [
-            False,
-            False,
-            True,
-            True,
-            True,
-            True,
-            False,
-            True,
-            False,
-            True,
-    ] == sentseg._mark_whitespaces(text)
-
-
-def test_mark_extended_chinese_chars():
-    text = '  测试。 \tabc '
-    assert [
-            False,
-            False,
-            True,
-            True,
-            True,
-            False,
-            False,
-            True,
-            True,
-            True,
-            False,
-    ] == sentseg._mark_extended_chinese_chars(text)
-
-
-def test_mark_sentence_endings():
-    text = 'a。"b，c!？！”d!！!'
-    assert [
-            False,
-            True,
-            True,
-            False,
-            False,
-            False,
-            True,
-            True,
-            True,
-            True,
-            False,
-            True,
-            True,
-            True,
-    ] == sentseg._mark_sentence_endings(text)
+def test_sentseg_lazy():
+    text = ''
+    assert isinstance(sentseg_lazy(text), Generator)

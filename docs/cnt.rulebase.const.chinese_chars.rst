@@ -1,7 +1,7 @@
-cnt.rulebase.delimiter\_segmenter module
+cnt.rulebase.const.chinese\_chars module
 ========================================
 
-.. automodule:: cnt.rulebase.delimiter_segmenter
+.. automodule:: cnt.rulebase.const.chinese_chars
     :members:
     :undoc-members:
     :show-inheritance:
