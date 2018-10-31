@@ -3,7 +3,7 @@
 
 """The setup script."""
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def load_requirements(path):
@@ -42,8 +42,8 @@ setup(
     long_description=readme + '\n\n' + history,
     include_package_data=True,
     keywords='cnt.rulebase',
-    name='cnt.rulebase',
-    packages=['cnt.rulebase'],
+    name='cnt_rulebase',
+    packages=find_packages(),
     test_suite='tests',
     tests_require=test_requirements,
     extras_require={'test': test_requirements},
