@@ -39,12 +39,16 @@ class ExactMatchLabeler(IntervalLabeler):
     AC_AUTOMATION: Any = None
 
     @classmethod
-    def build_ac_automation_from_strings(cls, keys: List[str]) -> None:
+    def build_ac_automation_from_strings(cls, keys: List[str]) -> Any:
         atm = ahocorasick.Automaton()  # pylint: disable=c-extension-no-member
         for idx, key in enumerate(keys):
             atm.add_word(key, (idx, key))
         atm.make_automaton()
-        cls.AC_AUTOMATION = atm
+        return atm
+
+    @classmethod
+    def build_and_bind_ac_automation_from_strings(cls, keys: List[str]) -> None:
+        cls.AC_AUTOMATION = cls.build_ac_automation_from_strings(keys)
 
     def intervals_generator(self) -> IntervalGeneratorType:
         if self.AC_AUTOMATION is None:

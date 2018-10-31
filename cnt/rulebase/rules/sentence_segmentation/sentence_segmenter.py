@@ -1,10 +1,23 @@
 """
 Chinese sentence segmentation.
 """
-from typing import Union, cast
+from typing import Union, Optional, List, cast
 
 from cnt.rulebase import workflow, const
 from cnt.rulebase.rules.sentence_segmentation import const as sentseg_const
+
+
+class SentenceSegementationConfig(workflow.BasicConfig):
+
+    def __init__(
+            self,
+            enable_comma_ending: bool,
+            extend_ending_with_delimiters: bool,
+            dynamic_endings: List[str],
+    ):
+        self.enable_comma_ending = enable_comma_ending
+        self.extend_ending_with_delimiters = extend_ending_with_delimiters
+        self.dynamic_endings = dynamic_endings
 
 
 class SentenceEndingLabeler(workflow.ExactMatchLabeler):
@@ -14,7 +27,31 @@ class SentenceEndingLabeler(workflow.ExactMatchLabeler):
     """
 
 
-SentenceEndingLabeler.build_ac_automation_from_strings(sentseg_const.EM_SENTENCE_ENDINGS)
+SentenceEndingLabeler.build_and_bind_ac_automation_from_strings(sentseg_const.EM_SENTENCE_ENDINGS)
+
+
+class DynamicSentenceEndingLabeler(workflow.ExactMatchLabeler):
+    """
+    Support dynamic sentence endings that will be built in runtime.
+    """
+
+    def __init__(self, input_sequence: str, config: Optional[workflow.BasicConfig]):
+        # Inject ``AC_AUTOMATION`` before __init__().
+        if config.dynamic_endings:
+            # pylint: disable=C0103
+            self.AC_AUTOMATION = self.build_ac_automation_from_strings(config.dynamic_endings)
+
+        super().__init__(input_sequence, config)
+
+    def intervals_generator(self) -> workflow.IntervalGeneratorType:
+
+        def mocker_generator() -> workflow.IntervalGeneratorType:
+            empty_tuple: workflow.IntervalListType = ()
+            yield from empty_tuple
+
+        if not self.config.dynamic_endings:
+            return mocker_generator()
+        return super().intervals_generator()
 
 
 class CommaLabeler(workflow.BasicSequentialLabeler):
@@ -55,21 +92,11 @@ class DelimitersLabeler(workflow.IntervalLabeler):
 DelimitersLabeler.initialize_by_intervals(const.ITV_DELIMITERS)
 
 
-class SentenceSegementationConfig(workflow.BasicConfig):
-
-    def __init__(
-            self,
-            enable_comma_ending: bool,
-            extend_ending_with_delimiters: bool,
-    ):
-        self.enable_comma_ending = enable_comma_ending
-        self.extend_ending_with_delimiters = extend_ending_with_delimiters
-
-
 class SentenceSegementationLabelProcessor(workflow.BasicLabelProcessor):
 
     def _labels_indicate_sentence_ending(self, labels: workflow.LabelsType) -> bool:
         return bool(labels[SentenceEndingLabeler] or
+                    (self.config.dynamic_endings and labels[DynamicSentenceEndingLabeler]) or
                     (self.config.enable_comma_ending and labels[CommaLabeler]))
 
     def result(self) -> workflow.IntervalGeneratorType:
@@ -162,6 +189,7 @@ def _generate_sentseg_workflow(lazy: bool) -> workflow.BasicWorkflow:
     return workflow.BasicWorkflow(
             sequential_labeler_classes=[
                     SentenceEndingLabeler,
+                    DynamicSentenceEndingLabeler,
                     DelimitersLabeler,
                     CommaLabeler,
                     WhitespaceLabeler,
@@ -181,10 +209,12 @@ def _sentseg(
         text: str,
         enable_comma_ending: bool,
         extend_ending_with_delimiters: bool,
+        dynamic_endings: List[str],
 ) -> Union[workflow.CommonOutputLazyType, workflow.CommonOutputType]:
     config = SentenceSegementationConfig(
             enable_comma_ending=enable_comma_ending,
             extend_ending_with_delimiters=extend_ending_with_delimiters,
+            dynamic_endings=dynamic_endings,
     )
     return cast(Union[workflow.CommonOutputLazyType, workflow.CommonOutputType],
                 sentseg_workflow.result(text, config))
@@ -194,6 +224,7 @@ def sentseg(
         text: str,
         enable_comma_ending: bool = False,
         extend_ending_with_delimiters: bool = False,
+        dynamic_endings: Optional[List[str]] = None,
 ) -> workflow.CommonOutputType:
     return cast(
             workflow.CommonOutputType,
@@ -202,6 +233,7 @@ def sentseg(
                     text,
                     enable_comma_ending,
                     extend_ending_with_delimiters,
+                    dynamic_endings or [],
             ))
 
 
@@ -209,6 +241,7 @@ def sentseg_lazy(
         text: str,
         enable_comma_ending: bool = False,
         extend_ending_with_delimiters: bool = False,
+        dynamic_endings: Optional[List[str]] = None,
 ) -> workflow.CommonOutputLazyType:
     return cast(
             workflow.CommonOutputLazyType,
@@ -217,4 +250,5 @@ def sentseg_lazy(
                     text,
                     enable_comma_ending,
                     extend_ending_with_delimiters,
+                    dynamic_endings or [],
             ))

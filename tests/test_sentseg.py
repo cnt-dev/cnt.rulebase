@@ -84,6 +84,11 @@ def test_sentseg():
     sents = sentseg(text, extend_ending_with_delimiters=True)
     assert '史卡肯表示:「xxx。」' == sents[0][0]
 
+    text = 'sent <end1> sent <end2>'
+    sents = sentseg(text, dynamic_endings=['<end1>', '<end2>'])
+    assert 2 == len(sents)
+    assert 'sent <end1>' == sents[0][0]
+
 
 def test_sentseg_lazy():
     text = ''
