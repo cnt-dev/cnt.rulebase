@@ -11,7 +11,7 @@ from cnt.rulebase.rules.sentence_segmentation.sentence_segmenter import (
 
 def test_sentence_ending_labler():
     text = "1。2。”3"
-    labeler = SentenceEndingLabeler(text)
+    labeler = SentenceEndingLabeler(text, None)
     result = [labeler.label(idx) for idx in range(len(text))]
     assert [
             False,
@@ -25,7 +25,7 @@ def test_sentence_ending_labler():
 
 def test_whitespace_labeler():
     text = '1 2\t3'
-    labeler = WhitespaceLabeler(text)
+    labeler = WhitespaceLabeler(text, None)
     result = [labeler.label(idx) for idx in range(len(text))]
     assert [
             False,
@@ -38,7 +38,7 @@ def test_whitespace_labeler():
 
 def test_sentence_valid_character_labeler():
     text = '测试 test 123 !!!'
-    labeler = SentenceValidCharacterLabeler(text)
+    labeler = SentenceValidCharacterLabeler(text, None)
     result = [labeler.label(idx) for idx in range(len(text))]
     assert [
             True,
@@ -81,7 +81,7 @@ def test_sentseg():
     assert 4 == len(sentseg(text, enable_comma_ending=True))
 
     text = '史卡肯表示:「xxx。」他说:「xxx。」'
-    sents = sentseg(text)
+    sents = sentseg(text, extend_ending_with_delimiters=True)
     assert '史卡肯表示:「xxx。」' == sents[0][0]
 
 

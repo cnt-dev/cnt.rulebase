@@ -4,6 +4,12 @@ Basic Workflow.
 from typing import Type, Generator, Any, Optional, Dict, Tuple, Iterable
 
 
+class BasicConfig:
+    """
+    Configuration could be accessed by LabelProcessor and OutputGenerator.
+    """
+
+
 class BasicSequentialLabeler:
     """
     Define the interface of SequentialLabeler.
@@ -11,8 +17,9 @@ class BasicSequentialLabeler:
     :param input_sequence: The input sequence.
     """
 
-    def __init__(self, input_sequence: str):
+    def __init__(self, input_sequence: str, config: Optional[BasicConfig]):
         self.input_sequence = input_sequence
+        self.config = config
 
     def label(self, index: int) -> bool:
         """
@@ -27,12 +34,6 @@ class BasicSequentialLabeler:
 LabelsType = Dict[Type[BasicSequentialLabeler], bool]
 IndexLabelsType = Tuple[int, LabelsType]
 IndexLabelsGeneratorType = Generator[IndexLabelsType, None, None]
-
-
-class BasicConfig:
-    """
-    Configuration could be accessed by LabelProcessor and OutputGenerator.
-    """
 
 
 class BasicLabelProcessor:
@@ -106,7 +107,9 @@ class BasicWorkflow:
         :param input_sequence: The input sequence.
         """
         # Step 1.
-        sequential_labelers = [sl_cls(input_sequence) for sl_cls in self.sequential_labeler_classes]
+        sequential_labelers = [
+                sl_cls(input_sequence, config) for sl_cls in self.sequential_labeler_classes
+        ]
         index_labels_generator = ((index, {
                 type(labeler): labeler.label(index) for labeler in sequential_labelers
         }) for index in range(len(input_sequence)))

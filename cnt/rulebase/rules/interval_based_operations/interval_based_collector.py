@@ -1,6 +1,8 @@
 """
 Collect the unicode codepoint specified by intervals.
 """
+from typing import cast
+
 from cnt.rulebase import workflow
 from cnt.rulebase.rules.interval_based_operations.basic_operation import (
         IntervalBasedOperationOutputGenerator,
@@ -36,7 +38,7 @@ class IntervalBasedCollectorLazy(BasicIntervalBasedOperation):
         self._output_generator_class = IntervalBasedCollectorOutputGeneratorLazy
 
     def result(self, text: str) -> workflow.CommonOutputLazyType:
-        return self.interval_based_workflow.result(text)
+        return cast(workflow.CommonOutputLazyType, self.interval_based_workflow.result(text))
 
 
 class IntervalBasedCollector(BasicIntervalBasedOperation):
@@ -45,4 +47,4 @@ class IntervalBasedCollector(BasicIntervalBasedOperation):
         self._output_generator_class = IntervalBasedCollectorOutputGenerator
 
     def result(self, text: str) -> workflow.CommonOutputType:
-        return self.interval_based_workflow.result(text)
+        return cast(workflow.CommonOutputType, self.interval_based_workflow.result(text))

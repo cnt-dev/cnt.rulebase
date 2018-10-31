@@ -1,7 +1,7 @@
 """
 Replace the unicode codepoint specified by intervals with arbitary strings.
 """
-from typing import Callable, Generator, List, Tuple
+from typing import Callable, Generator, List, Tuple, cast
 
 from cnt.rulebase import workflow
 from cnt.rulebase.rules.interval_based_operations.basic_operation import (
@@ -69,7 +69,7 @@ class IntervalBasedReplacerLazy(IntervalBasedReplacerOperation):
         self._output_generator_class = IntervalBasedReplacerOutputGeneratorLazy
 
     def result(self, text: str) -> ResultLazyType:
-        return self.interval_based_workflow.result(text, self.config)
+        return cast(ResultLazyType, self.interval_based_workflow.result(text, self.config))
 
 
 class IntervalBasedReplacer(IntervalBasedReplacerOperation):
@@ -78,7 +78,7 @@ class IntervalBasedReplacer(IntervalBasedReplacerOperation):
         self._output_generator_class = IntervalBasedReplacerOutputGenerator
 
     def result(self, text: str) -> ResultType:
-        return self.interval_based_workflow.result(text, self.config)
+        return cast(ResultType, self.interval_based_workflow.result(text, self.config))
 
 
 class IntervalBasedReplacerToString(IntervalBasedReplacerOperation):

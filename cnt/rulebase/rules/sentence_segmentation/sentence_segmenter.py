@@ -63,7 +63,7 @@ class SentenceSegementationConfig(workflow.BasicConfig):
             extend_ending_with_delimiters: bool,
     ):
         self.enable_comma_ending = enable_comma_ending
-        self.extend_ending_with_delimiters = extend_ending_with_delimiters,
+        self.extend_ending_with_delimiters = extend_ending_with_delimiters
 
 
 class SentenceSegementationLabelProcessor(workflow.BasicLabelProcessor):

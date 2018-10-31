@@ -2,7 +2,7 @@ from typing import List, Optional
 from typing import re as BuiltInReType
 import re
 
-from cnt.rulebase.workflow.basic_workflow import BasicSequentialLabeler
+from cnt.rulebase.workflow.basic_workflow import BasicSequentialLabeler, BasicConfig
 from cnt.rulebase.workflow.type_annotations import IntervalType, IntervalListType, IntervalGeneratorType
 
 
@@ -49,8 +49,8 @@ class IntervalLabeler(BasicSequentialLabeler):
         """
         cls.ITV_RE_PATTERN = build_re_pattern_from_intervals(intervals)
 
-    def __init__(self, input_sequence: str):
-        super().__init__(input_sequence)
+    def __init__(self, input_sequence: str, config: Optional[BasicConfig]):
+        super().__init__(input_sequence, config)
 
         self.intervals = self.intervals_generator()
         self.cur_interval = _next_interval(self.intervals)
