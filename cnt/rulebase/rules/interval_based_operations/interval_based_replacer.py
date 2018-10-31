@@ -18,6 +18,12 @@ ResultType = List[ReplacerSegmentType]
 ReplacerFunctionType = Callable[[str], str]
 
 
+class IntervalBasedReplacerConfig(workflow.BasicConfig):
+
+    def __init__(self, replacer_function: ReplacerFunctionType):
+        self.replacer_function = replacer_function
+
+
 #pylint: disable=W0223
 class _IntervalBasedReplacerOutputGenerator(IntervalBasedOperationOutputGenerator):
 
@@ -25,14 +31,13 @@ class _IntervalBasedReplacerOutputGenerator(IntervalBasedOperationOutputGenerato
         """
         ``self.config.replacer_function``(``Callable[[str], str]``) must exists.
         """
-        if not hasattr(self.config, 'replacer_function'):
-            raise NotImplementedError()
+        config = cast(IntervalBasedReplacerConfig, self.config)
 
         for interval, label in self.continuous_intervals():
             start, end = interval
             segment = self.input_sequence[start:end]
             if label:
-                segment = self.config.replacer_function(segment)
+                segment = config.replacer_function(segment)
             yield segment, (interval, label)
 
 
@@ -46,12 +51,6 @@ class IntervalBasedReplacerOutputGenerator(_IntervalBasedReplacerOutputGenerator
 
     def result(self) -> ResultType:
         return list(self._result())
-
-
-class IntervalBasedReplacerConfig(workflow.BasicConfig):
-
-    def __init__(self, replacer_function: ReplacerFunctionType):
-        self.replacer_function = replacer_function
 
 
 #pylint: disable=W0223

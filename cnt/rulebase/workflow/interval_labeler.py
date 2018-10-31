@@ -1,5 +1,6 @@
 from typing import List, Optional
-from typing import re as BuiltInReType
+from typing import re as BuiltInReType  # type: ignore
+
 import re
 
 from cnt.rulebase.workflow.basic_workflow import BasicSequentialLabeler, BasicConfig

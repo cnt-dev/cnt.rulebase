@@ -35,9 +35,9 @@ class DynamicSentenceEndingLabeler(workflow.ExactMatchLabeler):
     Support dynamic sentence endings that will be built in runtime.
     """
 
-    def __init__(self, input_sequence: str, config: Optional[workflow.BasicConfig]):
+    def __init__(self, input_sequence: str, config: Optional[SentenceSegementationConfig]):
         # Inject ``AC_AUTOMATION`` before __init__().
-        if config.dynamic_endings:
+        if config and config.dynamic_endings:
             # pylint: disable=C0103
             self.AC_AUTOMATION = self.build_ac_automation_from_strings(config.dynamic_endings)
 
@@ -46,11 +46,14 @@ class DynamicSentenceEndingLabeler(workflow.ExactMatchLabeler):
     def intervals_generator(self) -> workflow.IntervalGeneratorType:
 
         def mocker_generator() -> workflow.IntervalGeneratorType:
-            empty_tuple: workflow.IntervalListType = ()
+            empty_tuple = cast(workflow.IntervalListType, ())
             yield from empty_tuple
 
-        if not self.config.dynamic_endings:
-            return mocker_generator()
+        if self.config:
+            config = cast(SentenceSegementationConfig, self.config)
+            if not config.dynamic_endings:
+                return mocker_generator()
+
         return super().intervals_generator()
 
 
@@ -95,14 +98,17 @@ DelimitersLabeler.initialize_by_intervals(const.ITV_DELIMITERS)
 class SentenceSegementationLabelProcessor(workflow.BasicLabelProcessor):
 
     def _labels_indicate_sentence_ending(self, labels: workflow.LabelsType) -> bool:
+        config = cast(SentenceSegementationConfig, self.config)
         return bool(labels[SentenceEndingLabeler] or
-                    (self.config.dynamic_endings and labels[DynamicSentenceEndingLabeler]) or
-                    (self.config.enable_comma_ending and labels[CommaLabeler]))
+                    (config.dynamic_endings and labels[DynamicSentenceEndingLabeler]) or
+                    (config.enable_comma_ending and labels[CommaLabeler]))
 
     def result(self) -> workflow.IntervalGeneratorType:
         """
         Generate intervals indicating the valid sentences.
         """
+        config = cast(SentenceSegementationConfig, self.config)
+
         index = -1
         labels = None
 
@@ -143,7 +149,7 @@ class SentenceSegementationLabelProcessor(workflow.BasicLabelProcessor):
                         while True:
                             index, labels = next(self.index_labels_generator)
                             is_ending = (self._labels_indicate_sentence_ending(labels) or
-                                         (self.config.extend_ending_with_delimiters and
+                                         (config.extend_ending_with_delimiters and
                                           labels[DelimitersLabeler]))
 
                             if not is_ending:
@@ -181,11 +187,6 @@ class SentenceSegementationOutputGenerator(_SentenceSegementationOutputGenerator
 
 
 def _generate_sentseg_workflow(lazy: bool) -> workflow.BasicWorkflow:
-    if lazy:
-        output_generator_class = SentenceSegementationOutputGeneratorLazy
-    else:
-        output_generator_class = SentenceSegementationOutputGenerator
-
     return workflow.BasicWorkflow(
             sequential_labeler_classes=[
                     SentenceEndingLabeler,
@@ -196,7 +197,8 @@ def _generate_sentseg_workflow(lazy: bool) -> workflow.BasicWorkflow:
                     SentenceValidCharacterLabeler,
             ],
             label_processor_class=SentenceSegementationLabelProcessor,
-            output_generator_class=output_generator_class,
+            output_generator_class=(SentenceSegementationOutputGeneratorLazy
+                                    if lazy else SentenceSegementationOutputGenerator),
     )
 
 
