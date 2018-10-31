@@ -80,6 +80,10 @@ def test_sentseg():
     text = ('a,b，c‚d')
     assert 4 == len(sentseg(text, enable_comma_ending=True))
 
+    text = '史卡肯表示:「xxx。」他说:「xxx。」'
+    sents = sentseg(text)
+    assert '史卡肯表示:「xxx。」' == sents[0][0]
+
 
 def test_sentseg_lazy():
     text = ''

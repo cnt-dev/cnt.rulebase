@@ -33,7 +33,6 @@ class BasicConfig:
     """
     Configuration could be accessed by LabelProcessor and OutputGenerator.
     """
-    pass
 
 
 class BasicLabelProcessor:

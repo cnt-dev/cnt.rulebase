@@ -3,7 +3,7 @@ Chinese sentence segmentation.
 """
 from typing import Union, cast
 
-from cnt.rulebase import workflow
+from cnt.rulebase import workflow, const
 from cnt.rulebase.rules.sentence_segmentation import const as sentseg_const
 
 
@@ -11,10 +11,7 @@ class SentenceEndingLabeler(workflow.ExactMatchLabeler):
     """
     Mark sentence endings based on
     :py:const:`cnt.rulebase.const.sentence_endings.EM_SENTENCE_ENDINGS`
-
-    Time & space complexity: `O(1)`.
     """
-    pass
 
 
 SentenceEndingLabeler.build_ac_automation_from_strings(sentseg_const.EM_SENTENCE_ENDINGS)
@@ -23,8 +20,6 @@ SentenceEndingLabeler.build_ac_automation_from_strings(sentseg_const.EM_SENTENCE
 class CommaLabeler(workflow.BasicSequentialLabeler):
     """
     Mark comma.
-
-    Time & space complexity: `O(1)`.
     """
 
     COMMAS = (chr(0xFF0C), chr(0x201A), ',')
@@ -36,10 +31,7 @@ class CommaLabeler(workflow.BasicSequentialLabeler):
 class WhitespaceLabeler(workflow.IntervalLabeler):
     """
     Mark unicode whitespace.
-
-    Time & space complexity: `O(1)`.
     """
-    pass
 
 
 WhitespaceLabeler.initialize_by_regular_expression(r'\s+')
@@ -48,19 +40,30 @@ WhitespaceLabeler.initialize_by_regular_expression(r'\s+')
 class SentenceValidCharacterLabeler(workflow.IntervalLabeler):
     """
     Mark valid character of chinese sentence.
-
-    Time & space complexity: `O(1)`.
     """
-    pass
 
 
 SentenceValidCharacterLabeler.initialize_by_intervals(sentseg_const.ITV_SENTENCE_VALID_CHARS)
 
 
+class DelimitersLabeler(workflow.IntervalLabeler):
+    """
+    Mark dilimiters for sentence ending extension.
+    """
+
+
+DelimitersLabeler.initialize_by_intervals(const.ITV_DELIMITERS)
+
+
 class SentenceSegementationConfig(workflow.BasicConfig):
 
-    def __init__(self, enable_comma_ending: bool):
+    def __init__(
+            self,
+            enable_comma_ending: bool,
+            extend_ending_with_delimiters: bool,
+    ):
         self.enable_comma_ending = enable_comma_ending
+        self.extend_ending_with_delimiters = extend_ending_with_delimiters,
 
 
 class SentenceSegementationLabelProcessor(workflow.BasicLabelProcessor):
@@ -112,7 +115,11 @@ class SentenceSegementationLabelProcessor(workflow.BasicLabelProcessor):
                         # Consume the ending span.
                         while True:
                             index, labels = next(self.index_labels_generator)
-                            if not self._labels_indicate_sentence_ending(labels):
+                            is_ending = (self._labels_indicate_sentence_ending(labels) or
+                                         (self.config.extend_ending_with_delimiters and
+                                          labels[DelimitersLabeler]))
+
+                            if not is_ending:
                                 end = index
                                 break
                         # yeah we found the ending.
@@ -155,6 +162,7 @@ def _generate_sentseg_workflow(lazy: bool) -> workflow.BasicWorkflow:
     return workflow.BasicWorkflow(
             sequential_labeler_classes=[
                     SentenceEndingLabeler,
+                    DelimitersLabeler,
                     CommaLabeler,
                     WhitespaceLabeler,
                     SentenceValidCharacterLabeler,
@@ -168,17 +176,45 @@ SENTSEG_WORKFLOW_LAZY = _generate_sentseg_workflow(lazy=True)
 SENTSEG_WORKFLOW = _generate_sentseg_workflow(lazy=False)
 
 
-def _sentseg(sentseg_workflow: workflow.BasicWorkflow, text: str, enable_comma_ending: bool = False
-            ) -> Union[workflow.CommonOutputLazyType, workflow.CommonOutputType]:
-    config = SentenceSegementationConfig(enable_comma_ending=enable_comma_ending)
+def _sentseg(
+        sentseg_workflow: workflow.BasicWorkflow,
+        text: str,
+        enable_comma_ending: bool,
+        extend_ending_with_delimiters: bool,
+) -> Union[workflow.CommonOutputLazyType, workflow.CommonOutputType]:
+    config = SentenceSegementationConfig(
+            enable_comma_ending=enable_comma_ending,
+            extend_ending_with_delimiters=extend_ending_with_delimiters,
+    )
     return cast(Union[workflow.CommonOutputLazyType, workflow.CommonOutputType],
                 sentseg_workflow.result(text, config))
 
 
-def sentseg(text: str, enable_comma_ending: bool = False) -> workflow.CommonOutputType:
-    return cast(workflow.CommonOutputType, _sentseg(SENTSEG_WORKFLOW, text, enable_comma_ending))
+def sentseg(
+        text: str,
+        enable_comma_ending: bool = False,
+        extend_ending_with_delimiters: bool = False,
+) -> workflow.CommonOutputType:
+    return cast(
+            workflow.CommonOutputType,
+            _sentseg(
+                    SENTSEG_WORKFLOW,
+                    text,
+                    enable_comma_ending,
+                    extend_ending_with_delimiters,
+            ))
 
 
-def sentseg_lazy(text: str, enable_comma_ending: bool = False) -> workflow.CommonOutputLazyType:
-    return cast(workflow.CommonOutputLazyType,
-                _sentseg(SENTSEG_WORKFLOW_LAZY, text, enable_comma_ending))
+def sentseg_lazy(
+        text: str,
+        enable_comma_ending: bool = False,
+        extend_ending_with_delimiters: bool = False,
+) -> workflow.CommonOutputLazyType:
+    return cast(
+            workflow.CommonOutputLazyType,
+            _sentseg(
+                    SENTSEG_WORKFLOW_LAZY,
+                    text,
+                    enable_comma_ending,
+                    extend_ending_with_delimiters,
+            ))
