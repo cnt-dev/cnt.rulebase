@@ -169,20 +169,20 @@ class SentenceSegementationLabelProcessor(workflow.BasicLabelProcessor):
 #pylint: disable=W0223
 class _SentenceSegementationOutputGeneratorLazy(workflow.BasicOutputGenerator):
 
-    def _result(self) -> workflow.CommonOutputLazyType:
+    def _result(self) -> workflow.SegmentGeneratorType:
         return ((self.input_sequence[start:end], (start, end))
                 for start, end in self.label_processor_result)
 
 
 class SentenceSegementationOutputGeneratorLazy(_SentenceSegementationOutputGeneratorLazy):
 
-    def result(self) -> workflow.CommonOutputLazyType:
+    def result(self) -> workflow.SegmentGeneratorType:
         return self._result()
 
 
 class SentenceSegementationOutputGenerator(_SentenceSegementationOutputGeneratorLazy):
 
-    def result(self) -> workflow.CommonOutputType:
+    def result(self) -> workflow.SegmentListType:
         return list(self._result())
 
 
@@ -212,13 +212,13 @@ def _sentseg(
         enable_comma_ending: bool,
         extend_ending_with_delimiters: bool,
         dynamic_endings: List[str],
-) -> Union[workflow.CommonOutputLazyType, workflow.CommonOutputType]:
+) -> Union[workflow.SegmentGeneratorType, workflow.SegmentListType]:
     config = SentenceSegementationConfig(
             enable_comma_ending=enable_comma_ending,
             extend_ending_with_delimiters=extend_ending_with_delimiters,
             dynamic_endings=dynamic_endings,
     )
-    return cast(Union[workflow.CommonOutputLazyType, workflow.CommonOutputType],
+    return cast(Union[workflow.SegmentGeneratorType, workflow.SegmentListType],
                 sentseg_workflow.result(text, config))
 
 
@@ -227,9 +227,9 @@ def sentseg(
         enable_comma_ending: bool = False,
         extend_ending_with_delimiters: bool = False,
         dynamic_endings: Optional[List[str]] = None,
-) -> workflow.CommonOutputType:
+) -> workflow.SegmentListType:
     return cast(
-            workflow.CommonOutputType,
+            workflow.SegmentListType,
             _sentseg(
                     SENTSEG_WORKFLOW,
                     text,
@@ -244,9 +244,9 @@ def sentseg_lazy(
         enable_comma_ending: bool = False,
         extend_ending_with_delimiters: bool = False,
         dynamic_endings: Optional[List[str]] = None,
-) -> workflow.CommonOutputLazyType:
+) -> workflow.SegmentGeneratorType:
     return cast(
-            workflow.CommonOutputLazyType,
+            workflow.SegmentGeneratorType,
             _sentseg(
                     SENTSEG_WORKFLOW_LAZY,
                     text,

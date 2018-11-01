@@ -6,9 +6,9 @@ from cnt.rulebase.workflow.type_annotations import (
         IntervalType,
         IntervalListType,
         IntervalGeneratorType,
-        CommonSentenceType,
-        CommonOutputLazyType,
-        CommonOutputType,
+        SegmentType,
+        SegmentGeneratorType,
+        SegmentListType,
 )
 from cnt.rulebase.workflow.basic_workflow import (
         LabelsType,
