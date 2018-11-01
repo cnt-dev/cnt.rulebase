@@ -3,7 +3,7 @@
 
 __author__ = """Hunt Zhan"""
 __email__ = 'huntzhan.dev@gmail.com'
-__version__ = '0.8.3'
+__version__ = '0.9.0'
 
 __all__ = [
         'sentseg',
