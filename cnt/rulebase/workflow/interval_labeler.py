@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 from typing import re as BuiltInReType  # type: ignore
 
 import re
@@ -14,7 +14,7 @@ def _next_interval(intervals: IntervalGeneratorType) -> Optional[IntervalType]:
         return None
 
 
-def build_re_pattern_from_intervals(intervals: List[IntervalType]) -> BuiltInReType:
+def build_re_pattern_from_intervals(intervals: IntervalListType) -> BuiltInReType:
     """
     Convert intervals to regular expression pattern.
 

@@ -97,10 +97,10 @@ Pattern filtering (see :obj:`cnt.rulebase.collector`) ::
 
 
     # 3. Generate a new collector for any Unicode codepoint intervals.
-    my_collector_lazy, my_collector = rulebase.collector.generate_collector(
+    my_collector_lazy, my_collector = rulebase.collector.generate_collector([
             rulebase.const.ITV_CHINESE_CHARS,
             rulebase.const.ITV_ENGLISH_CHARS,
-    )
+    ])
 
     # 3. Return.
     [('他说', (1, 3)),
@@ -134,7 +134,7 @@ Pattern replacement (see :obj:`cnt.rulebase.replacer`) ::
     # 3. Generate a new replacer for any Unicode codepoint intervals & arbitrary replacement function.
     my_replacer_lazy, my_replacer, my_replacer_to_string = rulebase.replacer.generate_replacer(
             lambda x: '<{}>'.format(len(x)),
-            rulebase.const.ITV_ENGLISH_CHARS,
+            [rulebase.const.ITV_ENGLISH_CHARS],
     )
 
     # 3. Return.
