@@ -11,10 +11,12 @@ class SentenceSegementationConfig(workflow.BasicConfig):
 
     def __init__(
             self,
+            enable_strict_sentence_charset: bool,
             enable_comma_ending: bool,
             extend_ending_with_delimiters: bool,
             dynamic_endings: List[str],
     ):
+        self.enable_strict_sentence_charset = enable_strict_sentence_charset
         self.enable_comma_ending = enable_comma_ending
         self.extend_ending_with_delimiters = extend_ending_with_delimiters
         self.dynamic_endings = dynamic_endings
@@ -139,9 +141,10 @@ class SentenceSegementationLabelProcessor(workflow.BasicLabelProcessor):
                     index, labels = next(self.index_labels_generator)
 
                     # Detected invalid char.
-                    if not labels[SentenceValidCharacterLabeler] and not labels[WhitespaceLabeler]:
-                        end = index
-                        break
+                    if config.enable_strict_sentence_charset:
+                        if not labels[SentenceValidCharacterLabeler] and not labels[WhitespaceLabeler]:
+                            end = index
+                            break
 
                     # Detected sentence ending.
                     if self._labels_indicate_sentence_ending(labels):
@@ -209,11 +212,13 @@ SENTSEG_WORKFLOW = _generate_sentseg_workflow(lazy=False)
 def _sentseg(
         sentseg_workflow: workflow.BasicWorkflow,
         text: str,
+        enable_strict_sentence_charset: bool,
         enable_comma_ending: bool,
         extend_ending_with_delimiters: bool,
         dynamic_endings: List[str],
 ) -> Union[workflow.SegmentGeneratorType, workflow.SegmentListType]:
     config = SentenceSegementationConfig(
+            enable_strict_sentence_charset=enable_strict_sentence_charset,
             enable_comma_ending=enable_comma_ending,
             extend_ending_with_delimiters=extend_ending_with_delimiters,
             dynamic_endings=dynamic_endings,
@@ -224,6 +229,7 @@ def _sentseg(
 
 def sentseg(
         text: str,
+        enable_strict_sentence_charset: bool = False,
         enable_comma_ending: bool = False,
         extend_ending_with_delimiters: bool = False,
         dynamic_endings: Optional[List[str]] = None,
@@ -233,6 +239,7 @@ def sentseg(
             _sentseg(
                     SENTSEG_WORKFLOW,
                     text,
+                    enable_strict_sentence_charset,
                     enable_comma_ending,
                     extend_ending_with_delimiters,
                     dynamic_endings or [],
@@ -241,6 +248,7 @@ def sentseg(
 
 def sentseg_lazy(
         text: str,
+        enable_strict_sentence_charset: bool = False,
         enable_comma_ending: bool = False,
         extend_ending_with_delimiters: bool = False,
         dynamic_endings: Optional[List[str]] = None,
@@ -250,6 +258,7 @@ def sentseg_lazy(
             _sentseg(
                     SENTSEG_WORKFLOW_LAZY,
                     text,
+                    enable_strict_sentence_charset,
                     enable_comma_ending,
                     extend_ending_with_delimiters,
                     dynamic_endings or [],
