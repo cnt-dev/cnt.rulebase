@@ -141,10 +141,11 @@ class SentenceSegementationLabelProcessor(workflow.BasicLabelProcessor):
                     index, labels = next(self.index_labels_generator)
 
                     # Detected invalid char.
-                    if config.enable_strict_sentence_charset:
-                        if not labels[SentenceValidCharacterLabeler] and not labels[WhitespaceLabeler]:
-                            end = index
-                            break
+                    if config.enable_strict_sentence_charset and \
+                            not labels[SentenceValidCharacterLabeler] and \
+                            not labels[WhitespaceLabeler]:
+                        end = index
+                        break
 
                     # Detected sentence ending.
                     if self._labels_indicate_sentence_ending(labels):
