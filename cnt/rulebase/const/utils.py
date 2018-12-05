@@ -1,6 +1,7 @@
 """Utils functions"""
 import itertools
 from typing import Iterable, List, Tuple
+from cnt.rulebase.const.cjk_compatibility_ideographs import CJK_COMPATIBILITY_IDEOGRAPHS
 
 
 def sorted_chain(*ranges: Iterable[Tuple[int, int]]) -> List[Tuple[int, int]]:
@@ -18,3 +19,7 @@ def fullwidth_to_halfwidth(seq: str) -> str:
         return chr(code_point - 0xFEE0)
 
     return ''.join(map(convert, seq))
+
+
+def replace_cjk_compatibility_ideographs(seq: str) -> str:
+    return ''.join(chr(CJK_COMPATIBILITY_IDEOGRAPHS.get(ord(char), ord(char))) for char in seq)
