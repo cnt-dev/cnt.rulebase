@@ -13,7 +13,7 @@ twine==1.12.1
 tox==3.5.3
 yapf==0.25.0
 pylint==2.2.2
-mypy==0.641
+mypy==0.650
 pytest==4.0.1
 pytest-runner==4.2
 coverage==4.5.2
