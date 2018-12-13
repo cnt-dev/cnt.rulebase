@@ -1,7 +1,7 @@
 """
 Replace the unicode codepoint specified by intervals with arbitary strings.
 """
-from typing import Callable, Generator, List, Tuple, Dict, Type, cast
+from typing import Callable, Generator, List, Tuple, Dict, Type, cast, Optional
 
 from cnt.rulebase import workflow
 from cnt.rulebase.rules.interval_based_operations.basic_operation import (
@@ -9,8 +9,8 @@ from cnt.rulebase.rules.interval_based_operations.basic_operation import (
         IntervalsCollectionBasedOperation,
 )
 
-IntervalWithLabelType = Tuple[workflow.IntervalType, bool]
-ReplacerSegmentType = Tuple[str, IntervalWithLabelType]
+IntervalsWithLabelType = Tuple[workflow.IntervalType, workflow.IntervalType, bool]
+ReplacerSegmentType = Tuple[str, IntervalsWithLabelType]
 
 ResultLazyType = Generator[ReplacerSegmentType, None, None]
 ResultType = List[ReplacerSegmentType]
@@ -26,7 +26,7 @@ class IntervalsCollectionBasedReplacerConfig(workflow.BasicConfig):
 
 class IntervalsCollectionBasedReplacerLabelProcessor(workflow.BasicLabelProcessor):
 
-    def result(self) -> Generator[Tuple[int, bool], None, None]:
+    def result(self) -> Generator[Tuple[int, Optional[Type[workflow.IntervalLabeler]]], None, None]:
         while True:
             try:
                 index, labels = next(self.index_labels_generator)
@@ -37,7 +37,8 @@ class IntervalsCollectionBasedReplacerLabelProcessor(workflow.BasicLabelProcesso
             if len(labeler_cls) > 1:
                 raise RuntimeError('Labeler conflict!')
 
-            aggregated_mark = labeler_cls[0] if labeler_cls else None
+            aggregated_mark = cast(Type[workflow.IntervalLabeler],
+                                   labeler_cls[0]) if labeler_cls else None
             yield index, aggregated_mark
 
 
@@ -50,14 +51,28 @@ class _IntervalsCollectionBasedReplacerOutputGenerator(IntervalBasedOperationOut
         """
         config = cast(IntervalsCollectionBasedReplacerConfig, self.config)
 
+        diff_acc = 0
         for interval, aggregated_mark in self.continuous_intervals():
             start, end = interval
+            processed_start = start + diff_acc
+            processed_end = end + diff_acc
+
             segment = self.input_sequence[start:end]
 
             if aggregated_mark is not None:
-                segment = config.labeler2repl[aggregated_mark](segment)
+                processed_segment = config.labeler2repl[cast(Type[workflow.IntervalLabeler],
+                                                             aggregated_mark)](segment)
 
-            yield segment, (interval, aggregated_mark is not None)
+                if not processed_segment:
+                    # segment is removed.
+                    processed_end = processed_start
+                else:
+                    processed_end = processed_start + len(processed_segment)
+
+                diff_acc += len(processed_segment) - len(segment)
+                segment = processed_segment
+
+            yield segment, (interval, (processed_start, processed_end), aggregated_mark is not None)
 
 
 class IntervalsCollectionBasedReplacerOutputGeneratorLazy(

@@ -98,7 +98,7 @@ class IntervalsCollectionBasedOperation:
 
     def __init__(self, intervals_collection: List[workflow.IntervalListType]):
         # Labelers.
-        self.sequential_labeler_classes = []
+        self.sequential_labeler_classes: List[Type[workflow.IntervalLabeler]] = []
         for intervals in intervals_collection:
             self.sequential_labeler_classes.append(_generate_interval_labeler_class())
             self.sequential_labeler_classes[-1].initialize_by_intervals(intervals)
