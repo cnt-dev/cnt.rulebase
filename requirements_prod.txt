@@ -1,1 +1,1 @@
-pyahocorasick==1.1.12
+pyahocorasick==1.1.13.1
