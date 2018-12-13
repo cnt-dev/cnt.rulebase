@@ -1,17 +1,17 @@
 from cnt.rulebase.const import utils
 
 
-def test_fullwidth_to_halfwidth():
-    assert '123' == utils.fullwidth_to_halfwidth('１２３')
-    assert '123' == utils.fullwidth_to_halfwidth('123')
+def test_normalize_cjk_fullwidth_ascii():
+    assert '123' == utils.normalize_cjk_fullwidth_ascii('１２３')
+    assert '123' == utils.normalize_cjk_fullwidth_ascii('123')
 
-    assert '()' == utils.fullwidth_to_halfwidth('（）')
+    assert '()' == utils.normalize_cjk_fullwidth_ascii('（）')
 
 
-def test_replace_cjk_compatibility_ideographs():
+def test_normalize_cjk_compatibility_ideographs():
     from_char = '北'
     to_char = '北'
     assert from_char != to_char
 
-    assert to_char == utils.replace_cjk_compatibility_ideographs(from_char)
-    assert '测试' == utils.replace_cjk_compatibility_ideographs('测试')
+    assert to_char == utils.normalize_cjk_compatibility_ideographs(from_char)
+    assert '测试' == utils.normalize_cjk_compatibility_ideographs('测试')

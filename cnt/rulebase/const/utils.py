@@ -9,8 +9,11 @@ def sorted_chain(*ranges: Iterable[Tuple[int, int]]) -> List[Tuple[int, int]]:
     return sorted(itertools.chain(*ranges))
 
 
-def fullwidth_to_halfwidth(seq: str) -> str:
-    """Conver fullwith chars to halfwidth."""
+def normalize_cjk_fullwidth_ascii(seq: str) -> str:
+    """
+    Conver fullwith ASCII to halfwidth ASCII.
+    See https://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms
+    """
 
     def convert(char: str) -> str:
         code_point = ord(char)
@@ -21,5 +24,5 @@ def fullwidth_to_halfwidth(seq: str) -> str:
     return ''.join(map(convert, seq))
 
 
-def replace_cjk_compatibility_ideographs(seq: str) -> str:
+def normalize_cjk_compatibility_ideographs(seq: str) -> str:
     return ''.join(chr(CJK_COMPATIBILITY_IDEOGRAPHS.get(ord(char), ord(char))) for char in seq)

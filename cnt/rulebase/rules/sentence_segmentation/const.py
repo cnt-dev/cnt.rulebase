@@ -59,7 +59,7 @@ def _generate_sentence_ends() -> List[str]:
             '；',
     ])
     # add corresponding halfwidth.
-    ends = _flatten_nested([set((end, const.fullwidth_to_halfwidth(end))) for end in ends])
+    ends = _flatten_nested([set((end, const.normalize_cjk_fullwidth_ascii(end))) for end in ends])
 
     return ends
 
