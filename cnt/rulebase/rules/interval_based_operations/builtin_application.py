@@ -61,8 +61,8 @@ class BuiltInReplacer:
             cls,
             repl: Union[str, itb_repl.ReplacerFunctionType],
             intervals_collection: List[workflow.IntervalListType],
-    ) -> Tuple[itb_repl.IntervalBasedReplacerLazy, itb_repl.IntervalBasedReplacer, itb_repl.
-               IntervalBasedReplacerToString]:
+    ) -> Tuple[itb_repl.IntervalsCollectionBasedReplacerLazy, itb_repl.
+               IntervalsCollectionBasedReplacer, itb_repl.IntervalsCollectionBasedReplacerToString]:
 
         if isinstance(repl, str):
             if repl not in cls.REGISTERED_REPL:
@@ -73,9 +73,14 @@ class BuiltInReplacer:
 
         intervals = const.sorted_chain(*intervals_collection)
 
-        replacer_lazy = itb_repl.IntervalBasedReplacerLazy(intervals, replacer_function)
-        replacer = itb_repl.IntervalBasedReplacer(intervals, replacer_function)
-        replacer_to_string = itb_repl.IntervalBasedReplacerToString(intervals, replacer_function)
+        replacer_lazy = itb_repl.IntervalsCollectionBasedReplacerLazy({
+                replacer_function: intervals
+        })
+        replacer = itb_repl.IntervalsCollectionBasedReplacer({replacer_function: intervals})
+        replacer_to_string = itb_repl.IntervalsCollectionBasedReplacerToString({
+                replacer_function:
+                intervals
+        })
 
         return replacer_lazy, replacer, replacer_to_string
 

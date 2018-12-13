@@ -1,12 +1,12 @@
 """
 Replace the unicode codepoint specified by intervals with arbitary strings.
 """
-from typing import Callable, Generator, List, Tuple, cast
+from typing import Callable, Generator, List, Tuple, Dict, Type, cast
 
 from cnt.rulebase import workflow
 from cnt.rulebase.rules.interval_based_operations.basic_operation import (
         IntervalBasedOperationOutputGenerator,
-        BasicIntervalBasedOperation,
+        IntervalsCollectionBasedOperation,
 )
 
 IntervalWithLabelType = Tuple[workflow.IntervalType, bool]
@@ -18,72 +18,107 @@ ResultType = List[ReplacerSegmentType]
 ReplacerFunctionType = Callable[[str], str]
 
 
-class IntervalBasedReplacerConfig(workflow.BasicConfig):
+class IntervalsCollectionBasedReplacerConfig(workflow.BasicConfig):
 
-    def __init__(self, replacer_function: ReplacerFunctionType):
-        self.replacer_function = replacer_function
+    def __init__(self, labeler2repl: Dict[Type[workflow.IntervalLabeler], ReplacerFunctionType]):
+        self.labeler2repl = labeler2repl
+
+
+class IntervalsCollectionBasedReplacerLabelProcessor(workflow.BasicLabelProcessor):
+
+    def result(self) -> Generator[Tuple[int, bool], None, None]:
+        while True:
+            try:
+                index, labels = next(self.index_labels_generator)
+            except StopIteration:
+                return
+
+            labeler_cls = [lcls for lcls, marked in labels.items() if marked]
+            if len(labeler_cls) > 1:
+                raise RuntimeError('Labeler conflict!')
+
+            aggregated_mark = labeler_cls[0] if labeler_cls else None
+            yield index, aggregated_mark
 
 
 #pylint: disable=W0223
-class _IntervalBasedReplacerOutputGenerator(IntervalBasedOperationOutputGenerator):
+class _IntervalsCollectionBasedReplacerOutputGenerator(IntervalBasedOperationOutputGenerator):
 
     def _result(self) -> ResultLazyType:
         """
         ``self.config.replacer_function``(``Callable[[str], str]``) must exists.
         """
-        config = cast(IntervalBasedReplacerConfig, self.config)
+        config = cast(IntervalsCollectionBasedReplacerConfig, self.config)
 
-        for interval, label in self.continuous_intervals():
+        for interval, aggregated_mark in self.continuous_intervals():
             start, end = interval
             segment = self.input_sequence[start:end]
-            if label:
-                segment = config.replacer_function(segment)
-            yield segment, (interval, label)
+
+            if aggregated_mark is not None:
+                segment = config.labeler2repl[aggregated_mark](segment)
+
+            yield segment, (interval, aggregated_mark is not None)
 
 
-class IntervalBasedReplacerOutputGeneratorLazy(_IntervalBasedReplacerOutputGenerator):
+class IntervalsCollectionBasedReplacerOutputGeneratorLazy(
+        _IntervalsCollectionBasedReplacerOutputGenerator):
 
     def result(self) -> ResultLazyType:
         return self._result()
 
 
-class IntervalBasedReplacerOutputGenerator(_IntervalBasedReplacerOutputGenerator):
+class IntervalsCollectionBasedReplacerOutputGenerator(
+        _IntervalsCollectionBasedReplacerOutputGenerator):
 
     def result(self) -> ResultType:
         return list(self._result())
 
 
 #pylint: disable=W0223
-class IntervalBasedReplacerOperation(BasicIntervalBasedOperation):
+class IntervalsCollectionBasedReplacerOperation(IntervalsCollectionBasedOperation):
 
-    def __init__(self, intervals: workflow.IntervalListType,
-                 replacer_function: ReplacerFunctionType):
-        super().__init__(intervals)
-        self.config = IntervalBasedReplacerConfig(replacer_function=replacer_function)
+    def __init__(self,
+                 replacer_intervals: Dict[ReplacerFunctionType, workflow.IntervalListType]) -> None:
+        replacer_functions = []
+        interval_collections = []
+        for func, intervals in replacer_intervals.items():
+            replacer_functions.append(func)
+            interval_collections.append(intervals)
+
+        super().__init__(interval_collections)
+
+        labeler2repl = {
+                labeler_cls: replacer_function for labeler_cls, replacer_function in zip(
+                        self.sequential_labeler_classes, replacer_functions)
+        }
+        self.config = IntervalsCollectionBasedReplacerConfig(labeler2repl=labeler2repl)
+
+    def initialize_label_processor_class(self) -> None:
+        self._label_processor_class = IntervalsCollectionBasedReplacerLabelProcessor
 
 
-class IntervalBasedReplacerLazy(IntervalBasedReplacerOperation):
+class IntervalsCollectionBasedReplacerLazy(IntervalsCollectionBasedReplacerOperation):
 
     def initialize_output_generator_class(self) -> None:
-        self._output_generator_class = IntervalBasedReplacerOutputGeneratorLazy
+        self._output_generator_class = IntervalsCollectionBasedReplacerOutputGeneratorLazy
 
     def result(self, text: str) -> ResultLazyType:
         return cast(ResultLazyType, self.interval_based_workflow.result(text, self.config))
 
 
-class IntervalBasedReplacer(IntervalBasedReplacerOperation):
+class IntervalsCollectionBasedReplacer(IntervalsCollectionBasedReplacerOperation):
 
     def initialize_output_generator_class(self) -> None:
-        self._output_generator_class = IntervalBasedReplacerOutputGenerator
+        self._output_generator_class = IntervalsCollectionBasedReplacerOutputGenerator
 
     def result(self, text: str) -> ResultType:
         return cast(ResultType, self.interval_based_workflow.result(text, self.config))
 
 
-class IntervalBasedReplacerToString(IntervalBasedReplacerOperation):
+class IntervalsCollectionBasedReplacerToString(IntervalsCollectionBasedReplacerOperation):
 
     def initialize_output_generator_class(self) -> None:
-        self._output_generator_class = IntervalBasedReplacerOutputGeneratorLazy
+        self._output_generator_class = IntervalsCollectionBasedReplacerOutputGeneratorLazy
 
     def result(self, text: str) -> str:
         return ''.join(

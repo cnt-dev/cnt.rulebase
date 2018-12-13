@@ -1,7 +1,7 @@
 """
 Collect the unicode codepoint specified by intervals.
 """
-from typing import Type, Generator, Tuple
+from typing import Type, Generator, Tuple, List
 
 from cnt.rulebase import workflow
 
@@ -68,8 +68,6 @@ def _generate_interval_labeler_class() -> Type[workflow.IntervalLabeler]:
 
 class BasicIntervalBasedOperation:
 
-    OUTPUT_GENERATOR = workflow.BasicOutputGenerator
-
     def __init__(self, intervals: workflow.IntervalListType):
         # Labeler.
         self.sequential_labeler_class = _generate_interval_labeler_class()
@@ -92,5 +90,44 @@ class BasicIntervalBasedOperation:
         return workflow.BasicWorkflow(
                 sequential_labeler_classes=[self.sequential_labeler_class],
                 label_processor_class=IntervalBasedOperationLabelProcessor,
+                output_generator_class=self._output_generator_class,
+        )
+
+
+class IntervalsCollectionBasedOperation:
+
+    def __init__(self, intervals_collection: List[workflow.IntervalListType]):
+        # Labelers.
+        self.sequential_labeler_classes = []
+        for intervals in intervals_collection:
+            self.sequential_labeler_classes.append(_generate_interval_labeler_class())
+            self.sequential_labeler_classes[-1].initialize_by_intervals(intervals)
+
+        # OutputGenerator.
+        self._output_generator_class = workflow.BasicOutputGenerator
+        self.initialize_output_generator_class()
+
+        self._label_processor_class = workflow.BasicLabelProcessor
+        self.initialize_label_processor_class()
+
+        # Workflow.
+        self.interval_based_workflow = self._generate_workflow()
+
+    def initialize_label_processor_class(self) -> None:
+        """
+        Derived class should override this method by initializing ``self._label_processor_class``.
+        """
+        raise NotImplementedError()
+
+    def initialize_output_generator_class(self) -> None:
+        """
+        Derived class should override this method by initializing ``self._output_generator_class``.
+        """
+        raise NotImplementedError()
+
+    def _generate_workflow(self) -> workflow.BasicWorkflow:
+        return workflow.BasicWorkflow(
+                sequential_labeler_classes=self.sequential_labeler_classes,
+                label_processor_class=self._label_processor_class,
                 output_generator_class=self._output_generator_class,
         )
