@@ -56,7 +56,10 @@ ITV_WHITESPACE_CHARS = utils.sorted_chain([
         (0x20, 0x20),
         (0x85, 0x85),
         (0xA0, 0xA0),
-        (0xB7, 0xB7),
+
+        # Move the "middle dot" to delimiter category,
+        # since this one is commonly used in Chinese news material.
+        # (0xB7, 0xB7),
         (0x1680, 0x1680),
         (0x180E, 0x180E),
 

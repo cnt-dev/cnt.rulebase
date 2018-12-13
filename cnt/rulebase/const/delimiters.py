@@ -12,6 +12,11 @@ ITV_DELIMITERS = utils.sorted_chain(
                 (0x005B, 0x0060),
                 (0x007B, 0x007E),
         ],
+        [
+                # Pick from the whitespace category.
+                (0xB7, 0xB7)
+        ],
+
         # GENERAL_DELIMITERS_RAGES
         # http://www.unicode.org/charts/PDF/U2000.pdf
         [

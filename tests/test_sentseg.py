@@ -89,7 +89,7 @@ def test_sentseg():
     assert 2 == len(sents)
     assert 'sent <end1>' == sents[0][0]
 
-    text = '富兰克林·德拉诺·罗斯福'
+    text = '富兰克林😊德拉诺😊罗斯福'
     assert 1 == len(sentseg(text))
     assert 3 == len(sentseg(text, enable_strict_sentence_charset=True))
 
