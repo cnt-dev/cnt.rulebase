@@ -15,13 +15,19 @@ ITV_DELIMITERS = utils.sorted_chain(
         # GENERAL_DELIMITERS_RAGES
         # http://www.unicode.org/charts/PDF/U2000.pdf
         [
-                (0x2000, 0x206F),
+                # (0x2000, 0x206F),
+                # Fix with:
+                (0x2010, 0x2027),
+                (0x202D, 0x202E),
+                (0x2030, 0x205E),
         ],
         # CJK_DELIMITERS_RANGES
         # http://www.unicode.org/charts/PDF/U3000.pdf
         # http://www.unicode.org/charts/PDF/UFE30.pdf
         [
-                (0x3000, 0x303F),
+                # (0x3000, 0x303F),
+                # Fix with:
+                (0x3001, 0x303F),
                 (0xFE30, 0xFE4F),
         ],
         # DELIMITERS_EXTENSION_RANGES
