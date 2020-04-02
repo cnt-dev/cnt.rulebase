@@ -32,5 +32,5 @@ def test_chinese_sentence_chars_collector():
     text = 'a(b)c'
     assert 3 == len(BuiltInCollector.chinese_sentence_chars.result(text))
 
-    text = '测试1，测试2“(测试3)”。'
+    text = '测试 1，测试2“(测试3)”。'
     assert 3 == len(BuiltInCollector.chinese_sentence_chars.result(text))

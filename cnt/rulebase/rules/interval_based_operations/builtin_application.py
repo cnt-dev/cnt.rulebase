@@ -50,7 +50,7 @@ BuiltInCollector.setup_collector('delimiters', [const.ITV_DELIMITERS])
 
 BuiltInCollector.setup_collector(
         'chinese_sentence_chars',
-        [const.ITV_CHINESE_CHARS, const.ITV_ENGLISH_CHARS, const.ITV_DIGITS],
+        [const.ITV_CHINESE_CHARS, const.ITV_ENGLISH_CHARS, const.ITV_DIGITS, const.ITV_WHITESPACE_CHARS],
 )
 
 
